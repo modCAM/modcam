@@ -1,2 +1,2 @@
 # modCAM
-Open source software for Computer Aided Machining (CAM) research
+Open source software for Computer Aided Manufacturing (CAM) research
