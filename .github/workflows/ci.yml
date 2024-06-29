@@ -1,0 +1,207 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore: [ cmake/modcam_version.cmake ]
+  pull_request:
+    paths-ignore: [ cmake/modcam_version.cmake ]
+
+env: 
+  VCPKG_ROOT: "./vcpkg"
+  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+  VERSION_FILE: cmake/modcam_version.cmake
+
+jobs:
+  update-version:
+    name: Update version
+    runs-on: ubuntu-latest
+    permissions: 
+      contents: write
+    outputs:
+      version: ${{ steps.update-version.outputs.version }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Get current version
+      run: |
+        version="$(< $VERSION_FILE)"
+        pattern='([[:digit:]]{8}(\.)?[[:digit:]]*)'
+        [[ $version =~ $pattern ]]
+        version="${BASH_REMATCH[1]}"
+        echo "version: $version"
+        IFS='.' read -ra version <<< "$version"
+        echo "MAJOR_VERSION=${version[0]}" >> "$GITHUB_ENV"
+        echo "MINOR_VERSION=${version[1]}" >> "$GITHUB_ENV"
+
+    - name: Update version
+      id: update-version
+      run: |
+        utc_date=$(date --utc +"%Y%m%d")
+        if [ "$utc_date" -eq "$MAJOR_VERSION" ]; then
+          if [[ -z "$MINOR_VERSION" ]]; then
+            MINOR_VERSION=0
+          fi
+          (( ++MINOR_VERSION ))
+          version=$utc_date.$MINOR_VERSION
+        else
+          version=$utc_date
+        fi
+        echo -e "set(modCAM_VER $version)\n" > $VERSION_FILE
+        echo "version=$version" >> "$GITHUB_OUTPUT"
+
+    - name: Upload version file
+      uses: actions/upload-artifact@v4
+      with:
+        name: version-file
+        path: ${{ env.VERSION_FILE }}
+        if-no-files-found: error
+        overwrite: true
+        retention-days: 1
+
+  build-and-test:
+    name: Build and test on ${{ matrix.os }} + ${{ matrix.cpp_compiler }} + ${{ matrix.build_type }}
+    runs-on: ${{ matrix.os }}
+    needs: update-version
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+        build_type: [ Release ]
+        cpp_compiler: [ g++, cl ]
+        exclude:
+          - os: windows-latest
+            cpp_compiler: g++
+          - os: ubuntu-latest
+            cpp_compiler: cl
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Download version artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: version-file
+        path: cmake/
+
+    - name: Set up cache
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+    - name: Install vcpkg
+      shell: bash
+      run: |
+        git clone http://github.com/Microsoft/vcpkg
+        ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
+
+    - name: Configure
+      run: >
+        cmake -S .
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        --preset "build-tests"
+
+    - name: Build
+      run: cmake --build build --config ${{ matrix.build_type }}
+
+    - name: Test
+      run: ctest --test-dir build --build-config ${{ matrix.build_type }}
+
+    - name: Package
+      if: ${{ matrix.build_type == 'Release' }}
+      run: |
+        cd build/
+        cpack -C ${{ matrix.build_type }} -B ./package-artifacts
+
+    - name: Upload package artifacts
+      if: ${{ matrix.build_type == 'Release' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: package-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.build_type }}
+        path: build/package-artifacts/*.*
+        retention-days: 5
+
+  # Make sure the documentation is not broken.
+  build-docs:
+    name: Build docs
+    runs-on: ubuntu-latest
+    needs: update-version
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Download version artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: version-file
+        path: cmake/
+
+    - name: Install Doxygen
+      run: sudo apt-get install -y doxygen
+    
+    - name: Build docs
+      run: |
+        cmake -S . --preset "build-docs-only"
+        cmake --build build --config Release
+
+  push-version:
+    name: Push new version
+    runs-on: ubuntu-latest
+    needs: [ update-version, build-and-test, build-docs ]
+    if: github.ref_name == 'main'
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Download version artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: version-file
+        path: cmake/
+
+    - name: Push updated version file
+      id: version-tag
+      run: |
+        git add $VERSION_FILE
+        git -c user.name='github-actions[bot]' -c user.email='<>' commit -m 'Update version'
+        version=${{ needs.update-version.outputs.version }}
+        echo "version: $version"
+        git tag $version
+        git fetch
+        git push
+        git push origin $version
+
+  create-release:
+    name: Create release
+    runs-on: ubuntu-latest
+    needs: [ update-version, build-and-test, push-version ]
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Download package artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: package-artifacts
+        merge-multiple: true
+
+    - name: Create release
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VERSION: ${{needs.update-version.outputs.version}}
+      run: |
+        gh release create $VERSION ./package-artifacts/*.tar.gz ./package-artifacts/*.zip
