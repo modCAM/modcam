@@ -1,0 +1,7 @@
+{
+  "dependencies": [
+    "doctest",
+    "eigen3",
+    "libigl"
+  ]
+}
