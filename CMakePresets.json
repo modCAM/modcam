@@ -1,0 +1,61 @@
+{
+	"version": 3,
+	"configurePresets": [
+		{
+			"name": "build-minimal",
+			"displayName": "Bare minimum build",
+			"binaryDir": "build",
+			"cacheVariables": {
+				"CMAKE_TOOLCHAIN_FILE": {
+					"type": "FILEPATH",
+					"value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+				}
+			}
+		},
+		{
+			"name": "build-tests",
+			"displayName": "Build tests",
+			"inherits": "build-minimal",
+			"cacheVariables": {
+				"MODCAM_ENABLE_TESTING": {
+					"type": "BOOL",
+					"value": "ON"
+				}
+			}
+		},
+		{
+			"name": "build-docs",
+			"displayName": "Build documentation",
+			"inherits": "build-minimal",
+			"cacheVariables": {
+				"MODCAM_BUILD_DOC": {
+					"type": "BOOL",
+					"value": "ON"
+				}
+			}
+		},
+		{
+			"name": "build-all",
+			"displayName": "Build everything",
+			"inherits": [
+				"build-tests",
+				"build-docs"
+			]
+		},
+		{
+			"name": "build-docs-only",
+			"displayName": "Build only the documentation",
+			"inherits": "build-docs",
+			"cacheVariables": {
+				"CMAKE_TOOLCHAIN_FILE": {
+					"type": "FILEPATH",
+					"value": ""
+				},
+				"MODCAM_BUILD_PROJECT": {
+					"type": "BOOL",
+					"value": "OFF"
+				}
+			}
+		}
+	]
+}
