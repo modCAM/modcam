@@ -3,6 +3,6 @@
 .vscode/
 __pycache__
 build*/
-venv/
+.venv/
 CMakeUserPresets.json
 modcam_version.cpp
