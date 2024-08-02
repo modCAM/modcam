@@ -12,20 +12,13 @@
 # 
 # These are small helper functions that are not intended to be used outside 
 # this project.
-add_library(modCAM_utility STATIC)
+add_library(modCAM_utility OBJECT)
 add_library(modCAM::utility ALIAS modCAM_utility)
 target_link_libraries(
     modCAM_utility 
     PUBLIC
         Eigen3::Eigen
 )
-if(BUILD_SHARED_LIBS)
-	set_target_properties(
-		modCAM_utility 
-		PROPERTIES 
-			POSITION_INDEPENDENT_CODE ON
-	)
-endif()
 target_sources(
 	modCAM_utility
 	PUBLIC
