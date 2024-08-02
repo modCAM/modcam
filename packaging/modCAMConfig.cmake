@@ -20,5 +20,6 @@ endif()
 
 include(CMakeFindDependencyMacro)
 find_dependency(Eigen3)
+find_dependency(libigl)
 
 include(${CMAKE_CURRENT_LIST_DIR}/modCAM-Targets.cmake)
