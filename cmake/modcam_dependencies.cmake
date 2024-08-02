@@ -9,4 +9,4 @@
 # SPDX-License-Identifier: MPL-2.0
 
 find_package(Eigen3 REQUIRED NO_MODULE)
-find_package(libigl REQUIRED)
+find_package(libigl CONFIG REQUIRED)
