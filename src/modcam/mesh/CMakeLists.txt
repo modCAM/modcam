@@ -17,7 +17,6 @@ target_link_libraries(
     PRIVATE
         igl::igl_core
 		$<BUILD_INTERFACE:modCAM_utility>
-
 )
 set_target_properties(
 	modCAM_mesh PROPERTIES
