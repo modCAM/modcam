@@ -24,10 +24,7 @@ set_target_properties(
 	EXPORT_NAME mesh
 )
 
-generate_export_header(
-	modCAM_mesh
-	BASE_NAME ${PROJECT_NAME}
-)
+generate_export_header(modCAM_mesh)
 
 target_sources(
 	modCAM_mesh
@@ -35,7 +32,7 @@ target_sources(
 		FILE_SET HEADERS
 		BASE_DIRS "${CMAKE_CURRENT_BINARY_DIR}" "${modCAM_SOURCE_DIR}/include"
 		FILES 
-			"${CMAKE_CURRENT_BINARY_DIR}/modcam_export.h"
+			"${CMAKE_CURRENT_BINARY_DIR}/modcam_mesh_export.h"
 			"${modCAM_SOURCE_DIR}/include/modcam/mesh/per_vertex_basis.h"
 			"${modCAM_SOURCE_DIR}/include/modcam/mesh/per_vertex_normals.h"
 			"${modCAM_SOURCE_DIR}/include/modcam/mesh/principal_curvature.h"

@@ -12,4 +12,12 @@
 
 #include "modcam/modcam_version.h"
 
+namespace modcam {
+
 std::string modcam_version() { return "@modCAM_VERSION@"; }
+
+unsigned modcam_version_major() { return @modCAM_VERSION_MAJOR@; }
+
+unsigned modcam_version_minor() { return @modCAM_VERSION_MINOR@ +0; }
+
+}
