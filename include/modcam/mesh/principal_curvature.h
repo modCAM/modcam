@@ -13,7 +13,7 @@
 #ifndef CURVATURE_H
 #define CURVATURE_H
 
-#include "modcam_export.h"
+#include "modcam_mesh_export.h"
 
 #include <Eigen/Core>
 
@@ -29,7 +29,7 @@ using Curvature = std::tuple<Eigen::VectorXd, Eigen::VectorXd, Eigen::MatrixXd,
  * Compute the (vertex) principal curvature using the algorithm described in
  * @cite Rusinkiewicz2004.
  */
-MODCAM_EXPORT Curvature principal_curvature_rus2004(
+MODCAM_MESH_EXPORT Curvature principal_curvature_rus2004(
 	const Eigen::MatrixX3d &vertices, const Eigen::MatrixX3i &faces);
 
 } // namespace modcam::mesh

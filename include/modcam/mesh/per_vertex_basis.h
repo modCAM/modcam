@@ -13,7 +13,7 @@
 #ifndef PER_VERTEX_BASIS_H
 #define PER_VERTEX_BASIS_H
 
-#include "modcam_export.h"
+#include "modcam_mesh_export.h"
 
 #include <Eigen/Core>
 
@@ -26,8 +26,9 @@ namespace modcam::mesh {
  * normal.
  */
 
-MODCAM_EXPORT std::tuple<Eigen::MatrixX3d, Eigen::MatrixX3d, Eigen::MatrixX3d>
-per_vertex_basis(const Eigen::MatrixX3d &vertex_normals);
+MODCAM_MESH_EXPORT
+	std::tuple<Eigen::MatrixX3d, Eigen::MatrixX3d, Eigen::MatrixX3d>
+	per_vertex_basis(const Eigen::MatrixX3d &vertex_normals);
 
 } // namespace modcam::mesh
 

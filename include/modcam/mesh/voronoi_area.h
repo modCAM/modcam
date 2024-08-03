@@ -13,7 +13,7 @@
 #ifndef VORONOI_AREA_H
 #define VORONOI_AREA_H
 
-#include "modcam_export.h"
+#include "modcam_mesh_export.h"
 
 #include <Eigen/Core>
 
@@ -23,8 +23,8 @@ namespace modcam::mesh {
  * Compute the Voronoi cell areas for the triangles in a mesh as described in
  * @cite Meyer2003.
  */
-MODCAM_EXPORT Eigen::MatrixXd voronoi_area(const Eigen::MatrixXd &vertices,
-                                           const Eigen::MatrixXi &faces);
+MODCAM_MESH_EXPORT Eigen::MatrixXd voronoi_area(const Eigen::MatrixXd &vertices,
+                                                const Eigen::MatrixXi &faces);
 
 } // namespace modcam::mesh
 
