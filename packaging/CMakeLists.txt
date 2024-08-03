@@ -16,9 +16,16 @@ write_basic_package_version_file(
 
 install(
 	FILES
-		modCAMConfig.cmake
+	    modCAMConfig.cmake
 		"${CMAKE_CURRENT_BINARY_DIR}/modCAMConfigVersion.cmake"
 	DESTINATION "${MODCAM_INSTALL_CMAKEDIR}"
+	COMPONENT modCAM_Development
+)
+
+# Install the VERSION file for other projects to reference
+install(
+	FILES "${modCAM_SOURCE_DIR}/VERSION"
+	DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 	COMPONENT modCAM_Development
 )
 
