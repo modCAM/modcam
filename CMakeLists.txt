@@ -16,7 +16,7 @@ include(modcam_version)
 project(
     modCAM
     DESCRIPTION "Open source software for Computer Aided Manufacturing (CAM) research"
-	VERSION ${modCAM_VER}
+	VERSION ${modCAM_VRSN}
     LANGUAGES CXX
 )
 
