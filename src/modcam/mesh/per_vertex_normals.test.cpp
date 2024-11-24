@@ -20,7 +20,7 @@
 namespace modcam {
 TEST_CASE("Test per-vertex normals function") {
 	SUBCASE("Partial icosahedron") {
-		constexpr auto phi = (1.0 + std::sqrt(5.0)) / 2.0;
+		const auto phi = (1.0 + std::sqrt(5.0)) / 2.0;
 		Eigen::MatrixX3d vertices{
 			{phi, 1.0, 0.0},   {phi, -1.0, 0.0},  {-phi, -1.0, 0.0},
 			{-phi, 1.0, 0.0},  {1.0, 0.0, phi},   {-1.0, 0.0, phi},
@@ -45,7 +45,7 @@ TEST_CASE("Test per-vertex normals function") {
 		CHECK(vertex_normals.row(9).array().isNaN().all());
 	}
 	SUBCASE("Empty face array") {
-		constexpr auto phi = (1.0 + std::sqrt(5.0)) / 2.0;
+		const auto phi = (1.0 + std::sqrt(5.0)) / 2.0;
 		Eigen::MatrixX3d vertices{
 			{phi, 1.0, 0.0},   {phi, -1.0, 0.0},  {-phi, -1.0, 0.0},
 			{-phi, 1.0, 0.0},  {1.0, 0.0, phi},   {-1.0, 0.0, phi},
