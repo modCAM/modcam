@@ -20,7 +20,7 @@
 namespace modcam {
 TEST_CASE("Test per-vertex normals function") {
 	SUBCASE("Partial icosahedron") {
-		double phi = (1.0 + std::sqrt(5.0)) / 2.0;
+		constexpr auto phi = (1.0 + std::sqrt(5.0)) / 2.0;
 		Eigen::MatrixX3d vertices{
 			{phi, 1.0, 0.0},   {phi, -1.0, 0.0},  {-phi, -1.0, 0.0},
 			{-phi, 1.0, 0.0},  {1.0, 0.0, phi},   {-1.0, 0.0, phi},
@@ -32,8 +32,8 @@ TEST_CASE("Test per-vertex normals function") {
 		Eigen::MatrixX3i faces{{5, 4, 8},  {4, 5, 11},  {8, 4, 0},   {4, 1, 0},
 		                       {4, 11, 1}, {11, 10, 1}, {11, 2, 10}, {5, 2, 11},
 		                       {1, 10, 7}, {0, 1, 7}};
-		Eigen::MatrixX3d vertex_normals =
-			mesh::per_vertex_normals(vertices, faces);
+		Eigen::MatrixX3d vertex_normals;
+		mesh::per_vertex_normals(vertices, faces, vertex_normals);
 		CHECK(vertex_normals.rows() == vertices.rows());
 		CHECK(vertex_normals.cols() == vertices.cols());
 		CHECK((vertex_normals.row(4).array() == vertices.row(4).array()).all());
@@ -45,23 +45,23 @@ TEST_CASE("Test per-vertex normals function") {
 		CHECK(vertex_normals.row(9).array().isNaN().all());
 	}
 	SUBCASE("Empty face array") {
-		double phi = (1.0 + std::sqrt(5.0)) / 2.0;
+		constexpr auto phi = (1.0 + std::sqrt(5.0)) / 2.0;
 		Eigen::MatrixX3d vertices{
 			{phi, 1.0, 0.0},   {phi, -1.0, 0.0},  {-phi, -1.0, 0.0},
 			{-phi, 1.0, 0.0},  {1.0, 0.0, phi},   {-1.0, 0.0, phi},
 			{-1.0, 0.0, -phi}, {1.0, 0.0, -phi},  {0.0, phi, 1.0},
 			{0.0, phi, -1.0},  {0.0, -phi, -1.0}, {0.0, -phi, 1.0}};
 		Eigen::MatrixX3i faces(0, 3);
-		Eigen::MatrixX3d vertex_normals =
-			mesh::per_vertex_normals(vertices, faces);
+		Eigen::MatrixX3d vertex_normals;
+		mesh::per_vertex_normals(vertices, faces, vertex_normals);
 		CHECK(vertex_normals.size() == 0);
 	}
 	SUBCASE("Empty vertex array") {
 		const Eigen::MatrixX3d vertices(0, 3);
 		Eigen::MatrixX3i faces{{0, 1, 2}, {0, 2, 3}, {0, 3, 4},
 		                       {0, 4, 5}, {0, 5, 6}, {0, 6, 1}};
-		Eigen::MatrixX3d vertex_normals =
-			mesh::per_vertex_normals(vertices, faces);
+		Eigen::MatrixX3d vertex_normals;
+		mesh::per_vertex_normals(vertices, faces, vertex_normals);
 		CHECK(vertex_normals.size() == 0);
 	}
 }
