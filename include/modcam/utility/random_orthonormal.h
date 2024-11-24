@@ -33,8 +33,6 @@ namespace modcam::utility {
 template <typename DerivedVec, typename DerivedOrtho>
 void random_orthonormal(const Eigen::MatrixBase<DerivedVec> &vectors,
                         Eigen::MatrixBase<DerivedOrtho> &ortho_vectors) {
-	EIGEN_STATIC_ASSERT_MATRIX_SPECIFIC_SIZE(DerivedVec, Eigen::Dynamic, 3);
-
 	ortho_vectors.derived().resize(vectors.rows(), 3);
 	ortho_vectors = vectors;
 	ortho_vectors.rowwise().normalize();
