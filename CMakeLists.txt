@@ -24,7 +24,6 @@ project(
 include(CMakeDependentOption)
 include(CMakeRC)
 include(FetchContent)
-include(GenerateExportHeader)
 include(GNUInstallDirs)
 
 # Require out-of-source builds
@@ -36,9 +35,11 @@ endif()
 # Project options
 option(MODCAM_BUILD_DOC "Build documentation" OFF)
 option(MODCAM_ENABLE_TESTING "Build tests" OFF)
-
-# This option allows us to build only the documentation
-cmake_dependent_option(MODCAM_BUILD_PROJECT "Compile the code" ON "NOT MODCAM_ENABLE_TESTING" ON)
+cmake_dependent_option(
+	MODCAM_BUILD_PROJECT
+	"Compile the code. Turn off to build only the documentation." ON
+	"NOT MODCAM_ENABLE_TESTING" ON
+)
 
 # Documentation
 if(MODCAM_BUILD_DOC)
@@ -47,23 +48,6 @@ if(MODCAM_BUILD_DOC)
 		return() # Build only the documentation and nothing else.
 	endif()
 endif()
-
-# Symbols are hidden by default so that we explicitly define which symbols to 
-# expose.
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
-
-# rpath
-if(APPLE)
-	set(MODCAM_RPATH_BASE @loader_path)
-else()
-	set(MODCAM_RPATH_BASE $ORIGIN)
-endif()
-file(RELATIVE_PATH relDir
-	${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
-	${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
-)
-set(CMAKE_INSTALL_RPATH ${MODCAM_RPATH_BASE} ${MODCAM_RPATH_BASE}/${relDir})
 
 # Require C++20, but let a parent project ask for something higher
 if(DEFINED CMAKE_CXX_STANDARD)
@@ -81,27 +65,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(NOT DEFINED CMAKE_CXX_EXTENSIONS)
 	set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
-
-# Target output locations
-set(MODCAM_STAGE_DIR ${CMAKE_CURRENT_BINARY_DIR}/staging)
-if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${MODCAM_STAGE_DIR}/${CMAKE_INSTALL_BINDIR})
-endif()
-if(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
-	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${MODCAM_STAGE_DIR}/${CMAKE_INSTALL_LIBDIR})
-endif()
-if(NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
-	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${MODCAM_STAGE_DIR}/${CMAKE_INSTALL_LIBDIR})
-endif()
-
-# Install system runtime libraries
-if(WIN32)
-	set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${CMAKE_INSTALL_BINDIR})
-else()
-	set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${CMAKE_INSTALL_LIBDIR})
-endif()
-set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT modCAM_Runtime)
-include(InstallRequiredSystemLibraries)
 
 # All dependencies here
 include(modcam_dependencies)
@@ -126,7 +89,7 @@ add_subdirectory(src)
 # Packaging
 if(PROJECT_IS_TOP_LEVEL)
 	# Allow package maintainers to freely override the path for the configs
-	set(MODCAM_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/modCAM"
+	set(MODCAM_INSTALL_CMAKEDIR "share/cmake/modCAM"
 		CACHE PATH "CMake package config location"
 	)
 	mark_as_advanced(MODCAM_INSTALL_CMAKEDIR)

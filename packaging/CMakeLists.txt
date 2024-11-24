@@ -12,6 +12,7 @@ include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
 	modCAMConfigVersion.cmake
 	COMPATIBILITY AnyNewerVersion
+	ARCH_INDEPENDENT
 )
 
 install(
@@ -19,14 +20,12 @@ install(
 	    modCAMConfig.cmake
 		"${CMAKE_CURRENT_BINARY_DIR}/modCAMConfigVersion.cmake"
 	DESTINATION "${MODCAM_INSTALL_CMAKEDIR}"
-	COMPONENT modCAM_Development
 )
 
 # Install the VERSION file for other projects to reference
 install(
 	FILES "${modCAM_SOURCE_DIR}/VERSION"
 	DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-	COMPONENT modCAM_Development
 )
 
 install(
@@ -34,7 +33,6 @@ install(
     DESTINATION "${MODCAM_INSTALL_CMAKEDIR}"
     NAMESPACE modCAM::
     FILE modCAM-Targets.cmake
-    COMPONENT modCAM_Development
 )
 
 set(CPACK_PACKAGE_NAME modCAM)
@@ -58,16 +56,3 @@ set(CPACK_SOURCE_IGNORE_FILES
 )
 
 include(CPack)
-
-cpack_add_component(modCAM_Runtime
-	DISPLAY_NAME Runtime
-	DESCRIPTION "Shared libraries and executables"
-	REQUIRED
-	INSTALL_TYPES Full Developer Minimal
-)
-cpack_add_component(modCAM_Development
-	DISPLAY_NAME "Developer pre-requisites"
-	DESCRIPTION "Headers/static libs needed for building"
-	DEPENDS modCAM_Runtime
-	INSTALL_TYPES Full Developer
-)
