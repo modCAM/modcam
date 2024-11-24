@@ -10,14 +10,16 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-#include "modcam/modcam_version.h"
+#include "modcam/utility/modulus.h"
+
+#include <doctest/doctest.h>
 
 namespace modcam {
-
-std::string modcam_version() { return "@modCAM_VERSION@"; }
-
-unsigned modcam_version_major() { return @modCAM_VERSION_MAJOR@; }
-
-unsigned modcam_version_minor() { return @modCAM_VERSION_MINOR@ +0; }
-
+TEST_CASE("Test modulus function") {
+	for (auto i = -6; i < 4; i += 3) {
+		CHECK(utility::mod(i, 3) == 0);
+		CHECK(utility::mod(i + 1, 3) == 1);
+		CHECK(utility::mod(i + 2, 3) == 2);
+	}
 }
+} // namespace modcam
