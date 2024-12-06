@@ -9,6 +9,7 @@
 
 ipynb_files=`git diff --staged --name-only | awk "/.ipynb/"`
 have_output=""
+exit_status=0
 
 if [ -n "$ipynb_files" ]; then
   while read filename; do
@@ -34,6 +35,6 @@ if [ -n "$have_output" ]; then
           * ) echo "Please answer y or n";;
     esac
   done
-
-  echo $exit_status # We "return" a value via `echo`
 fi
+
+echo $exit_status # We "return" a value via `echo`
