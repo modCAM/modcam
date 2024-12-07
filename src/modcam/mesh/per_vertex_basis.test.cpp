@@ -39,7 +39,7 @@ TEST_CASE("Test per-vertex basis function") {
 		}
 	}
 	SUBCASE("Non-unit normal vector") {
-		Eigen::RowVector3d normal_vector{{1.0, 1.0, 1.0}};
+		const Eigen::RowVector3d normal_vector{{1.0, 1.0, 1.0}};
 		Eigen::RowVector3d b0;
 		Eigen::RowVector3d b1;
 		Eigen::RowVector3d b2;

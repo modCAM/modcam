@@ -19,16 +19,16 @@
 
 namespace modcam {
 TEST_CASE("Test random orthonormal") {
-	Eigen::MatrixX3f vectors{{1.0f, 0.0f, 0.0f},
-	                         {0.0f, 1.0f, 0.0f},
-	                         {0.0f, 0.0f, 1.0f},
-	                         {2.0f, 1.0f, -1.0f}};
+	const Eigen::MatrixX3f vectors{{1.0F, 0.0F, 0.0F},
+	                               {0.0F, 1.0F, 0.0F},
+	                               {0.0F, 0.0F, 1.0F},
+	                               {2.0F, 1.0F, -1.0F}};
 	Eigen::MatrixX3f ortho_vectors;
 	utility::random_orthonormal(vectors, ortho_vectors);
-	Eigen::VectorXf dot_prod =
+	const Eigen::VectorXf dot_prod =
 		(vectors.cwiseProduct(ortho_vectors)).rowwise().sum();
 	for (auto v : dot_prod) {
-		CHECK(v == doctest::Approx(0.0f));
+		CHECK(v == doctest::Approx(0.0F));
 	}
 }
 } // namespace modcam

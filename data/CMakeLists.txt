@@ -28,3 +28,7 @@ cmrc_add_resource_library(
 	PREFIX ${DATA_PREFIX_PATH}
 	"${modcam-data_SOURCE_DIR}/mesh/sphere.stl"
 )
+
+if(MODCAM_ENABLE_LINTING)
+	configure_file(.clang-tidy .clang-tidy COPYONLY)
+endif()
