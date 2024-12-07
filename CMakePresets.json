@@ -5,12 +5,7 @@
 			"name": "build-minimal",
 			"displayName": "Bare minimum build",
 			"binaryDir": "build",
-			"cacheVariables": {
-				"CMAKE_TOOLCHAIN_FILE": {
-					"type": "FILEPATH",
-					"value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-				}
-			}
+			"toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
 		},
 		{
 			"name": "build-tests",
@@ -35,10 +30,33 @@
 			}
 		},
 		{
+			"name": "linting",
+			"displayName": "Perform static analysis",
+			"inherits": "build-tests",
+			"cacheVariables": {
+				"MODCAM_ENABLE_LINTING": {
+					"type": "BOOL",
+					"value": "ON"
+				},
+				"CMAKE_EXPORT_COMPILE_COMMANDS": {
+					"type": "BOOL",
+					"value": "ON"
+				}
+			}
+		},
+		{
 			"name": "build-all",
 			"displayName": "Build everything",
 			"inherits": [
 				"build-tests",
+				"build-docs"
+			]
+		},
+		{
+			"name": "build-all-with-linting",
+			"displayName": "Build everything",
+			"inherits": [
+				"linting",
 				"build-docs"
 			]
 		},
