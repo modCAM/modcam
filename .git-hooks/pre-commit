@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Run the pre-commit scripts
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+exit_status=$( . $SCRIPT_DIR/pre-commit.d/jupyter-nb-warn )
+if [ "$exit_status" -ne 0 ]; then exit $exit_status; fi
+
+exit 0

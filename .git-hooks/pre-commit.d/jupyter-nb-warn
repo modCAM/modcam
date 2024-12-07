@@ -1,0 +1,40 @@
+#!/bin/sh
+
+# Check for .ipynb files with output cells;
+# ask the user if they really want to commit them
+#
+# Shamelessly stolen from James Folberth (jamesfolberth@gmail.com)
+# https://gist.github.com/jamesfolberth/a0223b97344f03aa534e4ec68e604d08
+# https://jamesfolberth.org/articles/2017/08/07/git-commit-hook-for-jupyter-notebooks/
+
+ipynb_files=`git diff --staged --name-only | awk "/.ipynb/"`
+have_output=""
+exit_status=0
+
+if [ -n "$ipynb_files" ]; then
+  while read filename; do
+    if [ $(git show :$filename | grep -cm1 "\"output_type\":") -ge 1 ]; then
+      have_output="${have_output}"$'\n'"$filename"
+    fi
+  done <<< $ipynb_files
+  # use here string to run in main shell: https://stackoverflow.com/a/16854326
+fi
+
+if [ -n "$have_output" ]; then
+  # https://stackoverflow.com/a/10015707
+  exec < /dev/tty # allows us to grab user input
+
+  echo "You appear to be committing Jupyter notebooks"
+  echo "that contain output:"
+  echo "$have_output"$'\n'
+  while true; do
+    read -p "Proceed with commit (y/n)?: " resp
+    case $resp in
+      [Yy]* ) exit_status=0; break;;
+      [Nn]* ) exit_status=1; break;;
+          * ) echo "Please answer y or n";;
+    esac
+  done
+fi
+
+echo $exit_status # We "return" a value via `echo`

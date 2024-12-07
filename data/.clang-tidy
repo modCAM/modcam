@@ -1,0 +1,11 @@
+---
+# Disable checks on data files
+# See https://stackoverflow.com/a/58379342
+InheritParentConfig: true
+Checks: '-*,misc-definitions-in-headers'
+CheckOptions:
+    - {
+        key: HeaderFileExtensions,
+        value: "x"
+      }
+...
