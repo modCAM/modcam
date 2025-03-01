@@ -1,80 +1,105 @@
-name: CI
+# The test workflow should run whenever changes are pushed to a pull request
+# branch or to 'main'. For any changes pushed to 'main', this workflow should
+# only run after a version update. This workflow should
+# - set up the build environment (use a container?),
+# - checkout the code,
+# - build the code,
+# - run linting checks, and
+# - run unit tests.
+#
+# A release should be created on 'main' after tests pass.
+
+name: Continuous integration
 
 on:
   push:
-    branches: [ main ]
-    paths-ignore: [ VERSION ]
+    branches:
+      - main
+    paths:
+      - VERSION
   pull_request:
-    paths-ignore: [ VERSION ]
+    paths:
+      - "**"
+      - "!.github/**"
+      - ".github/workflows/build-and-test.yml"
+      - "!docs/**"
+      - "!.clang-format"
+      - "!.gitignore"
+      - "!LICENSE"
+      - "!README.md"
+      - "!VERSION"
 
-env: 
+env:
   VCPKG_ROOT: "./vcpkg"
   VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
   VERSION_FILE: VERSION
 
 jobs:
   build-and-test:
-    name: Build and test on ${{ matrix.os }} + ${{ matrix.cpp_compiler }} + ${{ matrix.build_type }}
-    runs-on: ${{ matrix.os }}
+    name: Build and test on ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
 
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest ]
-        build_type: [ Release ]
-        cpp_compiler: [ g++, cl ]
-        exclude:
-          - os: windows-latest
-            cpp_compiler: g++
-          - os: ubuntu-latest
-            cpp_compiler: cl
+        config:
+          - {
+              name: "Windows MSVC",
+              os: windows-latest,
+              build_type: "Release",
+              cpp_compiler: "cl",
+            }
+          - {
+              name: "Ubuntu GCC",
+              os: ubuntu-latest,
+              build_type: "Release",
+              cpp_compiler: "g++",
+            }
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Set up cache
-      uses: actions/github-script@v7
-      with:
-        script: |
-          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+      - name: Set up cache
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-    - name: Install vcpkg
-      shell: bash
-      run: |
-        git clone http://github.com/Microsoft/vcpkg
-        ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
+      - name: Install vcpkg
+        shell: bash
+        run: |
+          git clone http://github.com/Microsoft/vcpkg
+          ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
 
-    - name: Update version
-      run: cmake -P ./cmake/update_version.cmake
+      - name: Configure
+        run: >
+          cmake -S .
+          -DCMAKE_CXX_COMPILER=${{ matrix.config.cpp_compiler }}
+          -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
+          --preset "build-tests"
 
-    - name: Configure
-      run: >
-        cmake -S .
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        --preset "build-tests"
+      - name: Build
+        run: cmake --build build --config ${{ matrix.config.build_type }}
 
-    - name: Build
-      run: cmake --build build --config ${{ matrix.build_type }}
+      - name: Test
+        run: ctest --test-dir build --build-config ${{ matrix.config.build_type }}
 
-    - name: Test
-      run: ctest --test-dir build --build-config ${{ matrix.build_type }}
+      - name: Package
+        id: package
+        if: github.ref_name == github.event.repository.default_branch
+        run: |
+          cd build/
+          cpack -C ${{ matrix.build_type }} -B ./package-artifacts
 
-    - name: Package
-      if: ${{ matrix.build_type == 'Release' }}
-      run: |
-        cd build/
-        cpack -C ${{ matrix.build_type }} -B ./package-artifacts
-
-    - name: Upload package artifacts
-      if: ${{ matrix.build_type == 'Release' }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: package-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.build_type }}
-        path: build/package-artifacts/*.*
-        retention-days: 5
+      - name: Upload package artifacts
+        if: steps.package.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-${{ matrix.config.os }}-${{ matrix.config.cpp_compiler }}-${{ matrix.config.build_type }}
+          path: build/package-artifacts/*.*
+          retention-days: 5
 
   # Make sure the documentation is not broken.
   build-docs:
@@ -82,70 +107,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Install Doxygen
-      run: sudo apt-get install -y doxygen
+      - name: Install Doxygen
+        run: sudo apt-get install -y doxygen
 
-    - name: Update version
-      run: cmake -P ./cmake/update_version.cmake
-    
-    - name: Build docs
-      run: |
-        cmake -S . --preset "build-docs-only"
-        cmake --build build --config Release
+      - name: Build docs
+        run: |
+          cmake -S . --preset "build-docs-only"
+          cmake --build build --config Release
 
-  push-version:
-    name: Push new version
-    runs-on: ubuntu-latest
-    needs: [ build-and-test, build-docs ]
-    if: github.ref_name == 'main'
-    permissions:
-      contents: write
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Update version
-      run: cmake -P ./cmake/update_version.cmake
-
-    - name: Push updated version file
-      id: version-tag
-      run: |
-        version="$(< $VERSION_FILE)"
-        echo "New version: $version"
-        git add $VERSION_FILE
-        git -c user.name='github-actions[bot]' -c user.email='<>' commit -m "Update to version ${version}"
-        git tag $version
-        git fetch
-        git push
-        git push origin $version
+      # Do I need to include these docs in the release?
 
   create-release:
     name: Create release
     runs-on: ubuntu-latest
-    needs: [ build-and-test, push-version ]
+    needs: [build-and-test, build-docs]
+    if: github.ref_name == github.event.repository.default_branch
     permissions:
       contents: write
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Download package artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: package-artifacts
-        merge-multiple: true
+      - name: Download package artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: package-artifacts
+          merge-multiple: true
 
-    - name: Update version
-      run: cmake -P ./cmake/update_version.cmake
-
-    - name: Create release
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        version="$(< $VERSION_FILE)"
-        gh release create $version ./package-artifacts/*.tar.gz ./package-artifacts/*.zip
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version="$(< ${{ env.VERSION_FILE }})"
+          gh release create $version ./package-artifacts/*.tar.gz ./package-artifacts/*.zip
