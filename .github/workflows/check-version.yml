@@ -1,0 +1,60 @@
+# This workflow checks for changes made to the VERSION file. It should block
+# changes made by the developer, but it should let changes pass if they were
+# merged in from 'main'.
+#
+# Developers should not touch the VERSION file! It is automatically updated by a
+# workflow when a branch is merged into 'main'.
+
+name: Check VERSION file
+
+on: pull_request
+
+env:
+  VERSION_FILE: VERSION
+
+jobs:
+  check-version:
+    name: Check version
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      # Credit to Brennan Kinney @polarathene for this solution to get a single branch's history
+      # https://github.com/actions/checkout/issues/520#issuecomment-1167205721
+      - name: Get branch history
+        env:
+          branch_pr: origin/${{ github.event.pull_request.head.ref }}
+          refspec_base: +${{ github.event.pull_request.base.sha }}:remotes/origin/${{ github.event.pull_request.base.ref }}
+          refspec_pr: +${{ github.event.pull_request.head.sha }}:remotes/origin/${{ github.event.pull_request.head.ref }}
+        run: |
+          # Fetch enough history to find a common ancestor commit (aka
+          # merge-base):
+          git fetch origin ${{ env.refspec_pr }} \
+            --depth=$(( ${{ github.event.pull_request.commits }} + 1 )) \
+            --no-tags --prune --no-recurse-submodules
+
+          # This should get the oldest commit in the local fetched history
+          # (which may not be the commit the PR branched from):
+          COMMON_ANCESTOR=$( git rev-list --first-parent --max-parents=0 --max-count=1 ${{ env.branch_pr }} )
+          DATE=$( git log --date=iso8601 --format=%cd "${COMMON_ANCESTOR}" )
+
+          # Get all commits since that commit date from the base branch
+          git fetch origin ${{ env.refspec_base }} --shallow-since="${DATE}" \
+            --no-tags --prune --no-recurse-submodules
+
+      - name: Check version
+        env:
+          branch_base: ${{ github.event.pull_request.base.ref }}
+        run: |
+          version_changed=$(git diff --quiet $(git merge-base --fork-point origin/${{ env.branch_base }}) -- VERSION; echo $?)
+          if [ $version_changed -ne 0 ]; then
+            echo "VERSION file has changed! To restore the VERSION file, you need to..."
+            echo "  git restore --source=\$(git merge-base --fork-point ${{ env.branch_base }}) -- VERSION"
+            echo "  git add VERSION"
+            echo "  git commit -m \"Restore VERSION\""
+          fi
+          exit $version_changed
