@@ -63,11 +63,11 @@
 		{
 			"name": "build-docs-only",
 			"displayName": "Build only the documentation",
-			"inherits": "build-docs",
+			"binaryDir": "build",
 			"cacheVariables": {
-				"CMAKE_TOOLCHAIN_FILE": {
-					"type": "FILEPATH",
-					"value": ""
+				"MODCAM_BUILD_DOC": {
+					"type": "BOOL",
+					"value": "ON"
 				},
 				"MODCAM_BUILD_PROJECT": {
 					"type": "BOOL",
