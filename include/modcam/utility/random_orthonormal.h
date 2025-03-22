@@ -30,9 +30,9 @@ namespace modcam::utility {
  * @param[out] ortho_vectors #V-by-3 matrix of unit vectors orthogonal to the
  * input vectors
  */
-template <typename DerivedVec, typename DerivedOrtho>
+template <typename DerivedVec>
 void random_orthonormal(const Eigen::MatrixBase<DerivedVec> &vectors,
-                        Eigen::MatrixBase<DerivedOrtho> &ortho_vectors) {
+                        Eigen::MatrixBase<DerivedVec> &ortho_vectors) {
 	ortho_vectors.derived().resize(vectors.rows(), 3);
 	ortho_vectors = vectors;
 	ortho_vectors.rowwise().normalize();
