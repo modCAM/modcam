@@ -28,7 +28,9 @@ namespace modcam::utility {
  * @return the positive remainder r, such that r == a - x * b, where x is
  * an integer
  */
-template <typename T> T mod(T a, T b) { return ((a %= b) < 0) ? a + b : a; }
+template <typename T> auto mod(T a, T b) -> T {
+	return ((a %= b) < 0) ? a + b : a;
+}
 } // namespace modcam::utility
 
 #endif
