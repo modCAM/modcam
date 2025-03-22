@@ -139,7 +139,7 @@ if(MODCAM_ENABLE_LINTING)
 
 	find_program(RUN_CLANG_TIDY_EXECUTABLE run-clang-tidy REQUIRED)
 	add_custom_target(
-		run-clang-tidy
+		run-clang-tidy ALL
 		COMMAND ${RUN_CLANG_TIDY_EXECUTABLE}
 			-clang-tidy-binary ${CLANG_TIDY_EXECUTABLE}
 			-p ${CMAKE_BINARY_DIR}
