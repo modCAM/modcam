@@ -55,4 +55,4 @@ widgetsnbextension==4.0.11
 # Building the documentation
 sphinx
 breathe
-sphinx_rtd_theme
+sphinx-book-theme
