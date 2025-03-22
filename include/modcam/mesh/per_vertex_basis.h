@@ -31,7 +31,7 @@ namespace modcam::mesh {
  * vertex-local x-axis
  * @param[out] b1 #V-by-3 matrix of basis vectors, corresponding to the
  * vertex-local y-axis
- * @param[out] b0 #V-by-3 matrix of basis vectors, corresponding to the
+ * @param[out] b2 #V-by-3 matrix of basis vectors, corresponding to the
  * vertex-local z-axis (aligned with the vertex normal)
  */
 template <typename DerivedN, typename DerivedB0, typename DerivedB1,
