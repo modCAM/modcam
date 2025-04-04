@@ -5,7 +5,13 @@
 			"name": "build-minimal",
 			"displayName": "Bare minimum build",
 			"binaryDir": "build",
-			"toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+			"toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+			"cacheVariables": {
+				"CMAKE_EXPORT_COMPILE_COMMANDS": {
+					"type": "BOOL",
+					"value": "ON"
+				}
+			}
 		},
 		{
 			"name": "build-tests",
@@ -35,10 +41,6 @@
 			"inherits": "build-tests",
 			"cacheVariables": {
 				"MODCAM_ENABLE_LINTING": {
-					"type": "BOOL",
-					"value": "ON"
-				},
-				"CMAKE_EXPORT_COMPILE_COMMANDS": {
 					"type": "BOOL",
 					"value": "ON"
 				}
