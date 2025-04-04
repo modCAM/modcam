@@ -8,7 +8,7 @@
 # SPDX-FileCopyrightText: Copyright contributors to the modCAM project.
 # SPDX-License-Identifier: MPL-2.0
 
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 4.0)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(modcam_version)
@@ -33,30 +33,40 @@ if(PROJECT_IS_TOP_LEVEL AND EXISTS "${LOC_PATH}")
 endif()
 
 # Project options
+option(MODCAM_FORCE_VIRTUAL_ENV "Throw an error if a Python virtual environment is not active." ON)
 option(MODCAM_BUILD_DOC "Build documentation" OFF)
 option(MODCAM_ENABLE_TESTING "Build tests" OFF)
 option(MODCAM_ENABLE_LINTING "Run static analysis checks" OFF)
 cmake_dependent_option(
 	MODCAM_BUILD_PROJECT
 	"Compile the code. Turn off to build only the documentation." ON
-	"NOT MODCAM_ENABLE_TESTING" ON
+	"NOT MODCAM_ENABLE_TESTING AND NOT MODCAM_ENABLE_LINTING" ON
 )
+cmake_dependent_option(
+	MODCAM_FORCE_VIRTUAL_ENV
+	"Throw an error if a Python virtual environment is not active." ON
+	"MODCAM_BUILD_DOC" ON
+) # The documentation is built by Sphinx, which requires certain Python
+  # packages. We only force the installation of those packages when building the
+  # documentation. See cmake/modcam_dependencies.cmake.
 
 # Documentation
 if(MODCAM_BUILD_DOC)
     add_subdirectory(docs)
-	if(NOT MODCAM_BUILD_PROJECT)
-		return() # Build only the documentation and nothing else.
-	endif()
+endif()
+if(NOT MODCAM_BUILD_PROJECT)
+	return() # Build only the documentation and nothing else.
 endif()
 
-# Require C++20, but let a parent project ask for something higher
+# Require a minimum C++ standard, but let a parent project ask for something
+# higher.
+set(MODCAM_MIN_CXX_STANDARD 20)
 if(DEFINED CMAKE_CXX_STANDARD)
-	if(CMAKE_CXX_STANDARD EQUAL 98 OR CMAKE_CXX_STANDARD LESS 20)
-		message(FATAL_ERROR "modCAM requires at least C++20")
+	if(CMAKE_CXX_STANDARD EQUAL 98 OR CMAKE_CXX_STANDARD LESS MODCAM_MIN_CXX_STANDARD)
+		message(FATAL_ERROR "modCAM requires at least C++${MODCAM_MIN_CXX_STANDARD}")
 	endif()
 else()
-	set(CMAKE_CXX_STANDARD 20)
+	set(CMAKE_CXX_STANDARD ${MODCAM_MIN_CXX_STANDARD})
 endif()
 
 # Always enforce the language constraint
@@ -105,7 +115,7 @@ if(MODCAM_ENABLE_LINTING)
 	if(NOT CMAKE_EXPORT_COMPILE_COMMANDS)
 		string(
 			CONCAT ERR_MSG
-			"MODCAM_ENABLE_LINTING is ON, but CMAKE_EXPORT_COMPILE_COMMANDS is OFF \n"
+			"MODCAM_ENABLE_LINTING is ON, but CMAKE_EXPORT_COMPILE_COMMANDS is OFF. \n"
 			"CMAKE_EXPORT_COMPILE_COMMANDS should be set to ON in a toolchain file, \n"
 			"in a preset, or on the command line."
 		)
