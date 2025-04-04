@@ -41,10 +41,9 @@ void per_vertex_normals(const Eigen::MatrixBase<DerivedV> &vertices,
 		return;
 	}
 
-	typedef Eigen::Matrix<typename DerivedV::Scalar,
-	                      DerivedV::RowsAtCompileTime, 3>
-		MatrixT;
-	typedef Eigen::Matrix<typename DerivedV::Scalar, 1, 3> RowVectorT;
+	using MatrixT = Eigen::Matrix<typename DerivedV::Scalar,
+	                              DerivedV::RowsAtCompileTime, 3>;
+	using RowVectorT = Eigen::Matrix<typename DerivedV::Scalar, 1, 3>;
 
 	MatrixT edge_squared;
 	igl::edge_lengths(vertices, faces, edge_squared);

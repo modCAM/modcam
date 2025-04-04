@@ -16,7 +16,6 @@
 #include "modcam/utility/modulus.h"
 
 #include <Eigen/Core>
-#include <Eigen/src/Core/MatrixBase.h>
 
 #include <igl/cotmatrix_entries.h>
 #include <igl/doublearea.h>
@@ -54,9 +53,8 @@ void voronoi_area(const Eigen::MatrixBase<DerivedV> &vertices,
 			"should have three columns.");
 	}
 
-	typedef Eigen::Matrix<typename DerivedVA::Scalar,
-	                      DerivedVA::RowsAtCompileTime, 3>
-		MatrixT;
+	using MatrixT = Eigen::Matrix<typename DerivedVA::Scalar,
+	                              DerivedVA::RowsAtCompileTime, 3>;
 
 	auto num_faces = faces.rows();
 	v_area.derived().resize(num_faces, vertices_per_face);
