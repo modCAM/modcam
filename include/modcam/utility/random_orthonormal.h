@@ -37,7 +37,7 @@ void random_orthonormal(const Eigen::MatrixBase<DerivedVec> &vectors,
 	ortho_vectors = vectors;
 	ortho_vectors.rowwise().normalize();
 
-	Eigen::Matrix<typename DerivedVec::Scalar, 1, 3> perturb_vec;
+	Eigen::RowVector3<typename DerivedVec::Scalar> perturb_vec;
 	constexpr auto perturbation = static_cast<typename DerivedVec::Scalar>(1.0);
 	constexpr auto one = static_cast<typename DerivedVec::Scalar>(1.0);
 	constexpr auto tolerance = static_cast<typename DerivedVec::Scalar>(1.0e-2);

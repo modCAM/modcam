@@ -13,17 +13,19 @@
 #include "modcam/utility/random_orthonormal.h"
 
 #include <Eigen/Core>
+#include <Eigen/src/Core/util/Constants.h>
 #include <doctest/doctest.h>
 
 #include <cmath>
 
 namespace modcam {
+using RowMatrixX3f = Eigen::Matrix<float, Eigen::Dynamic, 3, Eigen::RowMajor>;
 TEST_CASE("Test random orthonormal") {
-	const Eigen::MatrixX3f vectors{{1.0F, 0.0F, 0.0F},
-	                               {0.0F, 1.0F, 0.0F},
-	                               {0.0F, 0.0F, 1.0F},
-	                               {2.0F, 1.0F, -1.0F}};
-	Eigen::MatrixX3f ortho_vectors;
+	const RowMatrixX3f vectors{{1.0F, 0.0F, 0.0F},
+	                           {0.0F, 1.0F, 0.0F},
+	                           {0.0F, 0.0F, 1.0F},
+	                           {2.0F, 1.0F, -1.0F}};
+	RowMatrixX3f ortho_vectors;
 	utility::random_orthonormal(vectors, ortho_vectors);
 	const Eigen::VectorXf dot_prod =
 		(vectors.cwiseProduct(ortho_vectors)).rowwise().sum();
