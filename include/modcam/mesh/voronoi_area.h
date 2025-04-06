@@ -17,6 +17,10 @@
 
 #include <Eigen/Core>
 
+#include <Eigen/src/Core/Array.h>
+#include <Eigen/src/Core/Matrix.h>
+#include <Eigen/src/Core/PlainObjectBase.h>
+#include <Eigen/src/Core/util/Constants.h>
 #include <igl/cotmatrix_entries.h>
 #include <igl/doublearea.h>
 #include <igl/edge_lengths.h>
@@ -39,7 +43,7 @@ namespace modcam::mesh {
 template <typename DerivedV, typename DerivedF, typename DerivedVA>
 void voronoi_area(const Eigen::MatrixBase<DerivedV> &vertices,
                   const Eigen::MatrixBase<DerivedF> &faces,
-                  Eigen::MatrixBase<DerivedVA> &v_area) {
+                  Eigen::PlainObjectBase<DerivedVA> &v_area) {
 
 	if (faces.size() == 0) {
 		v_area.derived().resize(0, 3);
@@ -53,34 +57,36 @@ void voronoi_area(const Eigen::MatrixBase<DerivedV> &vertices,
 			"should have three columns.");
 	}
 
-	using MatrixT = Eigen::Matrix<typename DerivedVA::Scalar,
-	                              DerivedVA::RowsAtCompileTime, 3>;
+	using RowMatrixX3 =
+		Eigen::Matrix<typename DerivedVA::Scalar, DerivedVA::RowsAtCompileTime,
+	                  3, Eigen::RowMajor>;
 
 	auto num_faces = faces.rows();
 	v_area.derived().resize(num_faces, vertices_per_face);
 
 	if (vertices.size() == 0) {
-		v_area = MatrixT::Zero(num_faces, vertices_per_face);
+		v_area.setZero();
 		return;
 	}
 
-	Eigen::ArrayXd area;
+	Eigen::ArrayX<typename DerivedVA::Scalar> area;
 	igl::doublearea(vertices, faces, area);
 	area /= static_cast<typename DerivedVA::Scalar>(
 		2.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers)
 
-	Eigen::ArrayXXd angles;
+	Eigen::ArrayXX<typename DerivedV::Scalar> angles;
 	igl::internal_angles(vertices, faces, angles);
 
-	Eigen::MatrixXd half_cot;
+	Eigen::MatrixX<typename DerivedVA::Scalar> half_cot;
 	igl::cotmatrix_entries(vertices, faces, half_cot);
 
-	Eigen::MatrixXd edge_squared;
+	Eigen::MatrixX<typename DerivedVA::Scalar> edge_squared;
 	igl::edge_lengths(vertices, faces, edge_squared);
 	edge_squared = edge_squared.cwiseProduct(edge_squared);
 
-	double right_angle =
-		std::numbers::pi / 2.0; // NOLINT(cppcoreguidelines-avoid-magic-numbers)
+	constexpr auto right_angle = static_cast<typename DerivedV::Scalar>(
+		std::numbers::pi /
+		2.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers)
 	Eigen::Array<bool, Eigen::Dynamic, 1> nonobtuse =
 		(angles <= right_angle).rowwise().all();
 
@@ -97,11 +103,13 @@ void voronoi_area(const Eigen::MatrixBase<DerivedV> &vertices,
 				if (angles(row, col) > right_angle) {
 					v_area(row, col) =
 						area(row) /
-						2.0; // NOLINT(cppcoreguidelines-avoid-magic-numbers)
+						static_cast<typename DerivedV::Scalar>(
+							2.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers)
 				} else {
 					v_area(row, col) =
 						area(row) /
-						4.0; // NOLINT(cppcoreguidelines-avoid-magic-numbers)
+						static_cast<typename DerivedV::Scalar>(
+							4.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers)
 				}
 			}
 		}

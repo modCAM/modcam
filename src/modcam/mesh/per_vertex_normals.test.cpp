@@ -13,6 +13,7 @@
 #include "modcam/mesh/per_vertex_normals.h"
 
 #include <Eigen/Core>
+#include <Eigen/src/Core/util/Meta.h>
 #include <doctest/doctest.h>
 
 #include <cmath>
@@ -22,6 +23,7 @@ namespace modcam {
 
 using RowMatrixX3d = Eigen::Matrix<double, Eigen::Dynamic, 3, Eigen::RowMajor>;
 using RowMatrixX3i = Eigen::Matrix<int, Eigen::Dynamic, 3, Eigen::RowMajor>;
+using RowMatrixX3f = Eigen::Matrix<float, Eigen::Dynamic, 3, Eigen::RowMajor>;
 
 TEST_CASE("Test per-vertex normals function") {
 	constexpr auto phi = std::numbers::phi;
@@ -38,17 +40,36 @@ TEST_CASE("Test per-vertex normals function") {
 		const RowMatrixX3i faces{
 			{5, 4, 8},   {4, 5, 11},  {8, 4, 0},  {4, 1, 0},  {4, 11, 1},
 			{11, 10, 1}, {11, 2, 10}, {5, 2, 11}, {1, 10, 7}, {0, 1, 7}};
-		RowMatrixX3d vertex_normals;
-		mesh::per_vertex_normals(vertices, faces, vertex_normals);
-		CHECK(vertex_normals.rows() == vertices.rows());
-		CHECK(vertex_normals.cols() == vertices.cols());
-		CHECK((vertex_normals.row(4).array() == vertices.row(4).array()).all());
-		CHECK(
-			(vertex_normals.row(11).array() == vertices.row(11).array()).all());
-		CHECK((vertex_normals.row(1).array() == vertices.row(1).array()).all());
-		CHECK(vertex_normals.row(3).array().isNaN().all());
-		CHECK(vertex_normals.row(6).array().isNaN().all());
-		CHECK(vertex_normals.row(9).array().isNaN().all());
+		SUBCASE("Same numeric types") {
+			RowMatrixX3d vertex_normals;
+			mesh::per_vertex_normals(vertices, faces, vertex_normals);
+			CHECK(vertex_normals.rows() == vertices.rows());
+			CHECK(vertex_normals.cols() == vertices.cols());
+			CHECK((vertex_normals.row(4).array() == vertices.row(4).array())
+			          .all());
+			CHECK((vertex_normals.row(11).array() == vertices.row(11).array())
+			          .all());
+			CHECK((vertex_normals.row(1).array() == vertices.row(1).array())
+			          .all());
+			CHECK(vertex_normals.row(3).array().isNaN().all());
+			CHECK(vertex_normals.row(6).array().isNaN().all());
+			CHECK(vertex_normals.row(9).array().isNaN().all());
+		}
+		SUBCASE("Different numeric types") {
+			RowMatrixX3f vertex_normals;
+			mesh::per_vertex_normals(vertices, faces, vertex_normals);
+			CHECK(vertex_normals.rows() == vertices.rows());
+			CHECK(vertex_normals.cols() == vertices.cols());
+			for (auto row : {4, 11, 1}) {
+				for (Eigen::Index i = 0; i < vertices.cols(); ++i) {
+					CHECK(vertices(row, i) ==
+					      doctest::Approx(vertex_normals(row, i)));
+				}
+			}
+			CHECK(vertex_normals.row(3).array().isNaN().all());
+			CHECK(vertex_normals.row(6).array().isNaN().all());
+			CHECK(vertex_normals.row(9).array().isNaN().all());
+		}
 	}
 	SUBCASE("Empty face array") {
 		const RowMatrixX3d vertices{

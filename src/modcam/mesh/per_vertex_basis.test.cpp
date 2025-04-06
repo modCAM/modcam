@@ -18,24 +18,46 @@
 #include <cmath>
 
 namespace modcam {
+
+using RowMatrixX3d = Eigen::Matrix<double, Eigen::Dynamic, 3, Eigen::RowMajor>;
+using RowMatrixX3i = Eigen::Matrix<int, Eigen::Dynamic, 3, Eigen::RowMajor>;
+using RowMatrixX3f = Eigen::Matrix<float, Eigen::Dynamic, 3, Eigen::RowMajor>;
+
 TEST_CASE("Test per-vertex basis function") {
 	SUBCASE("Unit normals along the coordinate axes") {
 		// Expect ( z, -y, x)
 		//        (-z, -x, y)
 		//        ( y, -x, z)
-		Eigen::MatrixX3d normal_vectors{
+		RowMatrixX3d normal_vectors{
 			{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}};
-		Eigen::MatrixX3d b0;
-		Eigen::MatrixX3d b1;
-		Eigen::MatrixX3d b2;
-		mesh::per_vertex_basis(normal_vectors, b0, b1, b2);
-		CHECK((b2.array() == normal_vectors.rowwise().normalized().array())
-		          .all());
-		for (Eigen::Index r = 0; r < b2.rows(); r++) {
-			CHECK((b0.row(r).cross(b1.row(r)).array() == b2.row(r).array())
+		SUBCASE("Same numeric type") {
+			RowMatrixX3d b0;
+			RowMatrixX3d b1;
+			RowMatrixX3d b2;
+			mesh::per_vertex_basis(normal_vectors, b0, b1, b2);
+			CHECK((b2.array() == normal_vectors.rowwise().normalized().array())
 			          .all());
-			CHECK((b1.row(r).cross(b2.row(r)).array() == b0.row(r).array())
+			for (Eigen::Index r = 0; r < b2.rows(); r++) {
+				CHECK((b0.row(r).cross(b1.row(r)).array() == b2.row(r).array())
+				          .all());
+				CHECK((b1.row(r).cross(b2.row(r)).array() == b0.row(r).array())
+				          .all());
+			}
+		}
+		SUBCASE("Different numeric types") {
+			RowMatrixX3f b0;
+			RowMatrixX3f b1;
+			RowMatrixX3f b2;
+			mesh::per_vertex_basis(normal_vectors, b0, b1, b2);
+			CHECK((b2.array() ==
+			       normal_vectors.rowwise().normalized().array().cast<float>())
 			          .all());
+			for (Eigen::Index r = 0; r < b2.rows(); r++) {
+				CHECK((b0.row(r).cross(b1.row(r)).array() == b2.row(r).array())
+				          .all());
+				CHECK((b1.row(r).cross(b2.row(r)).array() == b0.row(r).array())
+				          .all());
+			}
 		}
 	}
 	SUBCASE("Non-unit normal vector") {

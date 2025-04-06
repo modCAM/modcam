@@ -17,6 +17,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+#include <Eigen/src/Core/PlainObjectBase.h>
 
 namespace modcam::mesh {
 
@@ -34,15 +35,16 @@ namespace modcam::mesh {
  * @param[out] b2 #V-by-3 matrix of basis vectors, corresponding to the
  * vertex-local z-axis (aligned with the vertex normal)
  */
-template <typename DerivedN, typename DerivedB0, typename DerivedB1,
-          typename DerivedB2>
+template <typename DerivedN, typename DerivedB>
 void per_vertex_basis(const Eigen::MatrixBase<DerivedN> &vertex_normals,
-                      Eigen::MatrixBase<DerivedB0> &b0,
-                      Eigen::MatrixBase<DerivedB1> &b1,
-                      Eigen::MatrixBase<DerivedB2> &b2) {
+                      Eigen::PlainObjectBase<DerivedB> &b0,
+                      Eigen::PlainObjectBase<DerivedB> &b1,
+                      Eigen::PlainObjectBase<DerivedB> &b2) {
 	auto num_vectors = vertex_normals.rows();
 	b2.derived().resize(num_vectors, 3);
-	b2 = vertex_normals.rowwise().normalized();
+	b2 = vertex_normals.rowwise()
+	         .normalized()
+	         .template cast<typename DerivedB::Scalar>();
 	utility::random_orthonormal(b2, b0);
 	b1.derived().resize(num_vectors, 3);
 	for (Eigen::Index row = 0; row < num_vectors; row++) {
