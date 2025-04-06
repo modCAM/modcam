@@ -28,7 +28,7 @@ target_sources(
 		FILES
 			"${modCAM_SOURCE_DIR}/include/modcam/mesh/per_vertex_basis.h"
 			"${modCAM_SOURCE_DIR}/include/modcam/mesh/per_vertex_normals.h"
-			# "${modCAM_SOURCE_DIR}/include/modcam/mesh/principal_curvature.h"
+			"${modCAM_SOURCE_DIR}/include/modcam/mesh/principal_curvature.h"
 			"${modCAM_SOURCE_DIR}/include/modcam/mesh/voronoi_area.h"
 )
 
@@ -45,7 +45,7 @@ if(MODCAM_ENABLE_TESTING)
 		test_modcam PRIVATE
 			per_vertex_basis.test.cpp
 			per_vertex_normals.test.cpp
-			# principal_curvature.test.cpp
+			principal_curvature.test.cpp
 			voronoi_area.test.cpp
 	)
 	target_link_libraries(
