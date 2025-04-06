@@ -30,17 +30,19 @@ namespace modcam::utility {
  * @param[out] ortho_vectors #V-by-3 matrix of unit vectors orthogonal to the
  * input vectors
  */
-template <typename DerivedVec>
+template <typename DerivedVec, typename DerivedOrtho>
 void random_orthonormal(const Eigen::MatrixBase<DerivedVec> &vectors,
-                        Eigen::MatrixBase<DerivedVec> &ortho_vectors) {
+                        Eigen::MatrixBase<DerivedOrtho> &ortho_vectors) {
 	ortho_vectors.derived().resize(vectors.rows(), 3);
-	ortho_vectors = vectors;
+	ortho_vectors = vectors.template cast<typename DerivedOrtho::Scalar>();
 	ortho_vectors.rowwise().normalize();
 
-	Eigen::RowVector3<typename DerivedVec::Scalar> perturb_vec;
-	constexpr auto perturbation = static_cast<typename DerivedVec::Scalar>(1.0);
-	constexpr auto one = static_cast<typename DerivedVec::Scalar>(1.0);
-	constexpr auto tolerance = static_cast<typename DerivedVec::Scalar>(1.0e-2);
+	Eigen::RowVector3<typename DerivedOrtho::Scalar> perturb_vec;
+	constexpr auto perturbation =
+		static_cast<typename DerivedOrtho::Scalar>(1.0);
+	constexpr auto one = static_cast<typename DerivedOrtho::Scalar>(1.0);
+	constexpr auto tolerance =
+		static_cast<typename DerivedOrtho::Scalar>(1.0e-2);
 	for (auto vec : ortho_vectors.rowwise()) {
 		perturb_vec = vec;
 		auto x_aligned = (one - std::abs(vec(0))) < tolerance;
