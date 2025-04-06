@@ -20,40 +20,54 @@
 #include <stdexcept>
 
 namespace modcam {
+
+using RowMatrixX3d = Eigen::Matrix<double, Eigen::Dynamic, 3, Eigen::RowMajor>;
+using RowMatrixX3i = Eigen::Matrix<int, Eigen::Dynamic, 3, Eigen::RowMajor>;
+using RowMatrixX3f = Eigen::Matrix<float, Eigen::Dynamic, 3, Eigen::RowMajor>;
+
 TEST_CASE("Test Voronoi area function") {
 	SUBCASE("Equilateral triangle") {
-		const Eigen::MatrixX3d vertices{{0.0, 0.0, 0.0},
-		                                {1.0, 0.0, 0.0},
-		                                {0.5, std::numbers::sqrt3 / 2.0, 0.0}};
-		const Eigen::MatrixX3i faces{{0, 1, 2}};
-		Eigen::MatrixX3d weights;
-		mesh::voronoi_area(vertices, faces, weights);
-		const double one_third_area = std::numbers::sqrt3 / 12.0;
-		CHECK(weights(0) == doctest::Approx(one_third_area));
-		CHECK(weights(1) == doctest::Approx(one_third_area));
-		CHECK(weights(2) == doctest::Approx(one_third_area));
+		const RowMatrixX3d vertices{{0.0, 0.0, 0.0},
+		                            {1.0, 0.0, 0.0},
+		                            {0.5, std::numbers::sqrt3 / 2.0, 0.0}};
+		const RowMatrixX3i faces{{0, 1, 2}};
+		constexpr double one_third_area = std::numbers::sqrt3 / 12.0;
+		SUBCASE("Same numeric types") {
+			RowMatrixX3d weights;
+			mesh::voronoi_area(vertices, faces, weights);
+			CHECK(weights(0) == doctest::Approx(one_third_area));
+			CHECK(weights(1) == doctest::Approx(one_third_area));
+			CHECK(weights(2) == doctest::Approx(one_third_area));
+		}
+		SUBCASE("Different numeric types") {
+			RowMatrixX3f weights;
+			mesh::voronoi_area(vertices, faces, weights);
+			CHECK(weights(0) == doctest::Approx(one_third_area));
+			CHECK(weights(1) == doctest::Approx(one_third_area));
+			CHECK(weights(2) == doctest::Approx(one_third_area));
+		}
 	}
 	SUBCASE("Obtuse triangle") {
-		const Eigen::MatrixX3d vertices{
+		const RowMatrixX3d vertices{
 			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 0.1, 0.0}};
-		const Eigen::MatrixX3i faces{{0, 1, 2}};
-		Eigen::MatrixX3d weights;
+		const RowMatrixX3i faces{{0, 1, 2}};
+		RowMatrixX3d weights;
 		mesh::voronoi_area(vertices, faces, weights);
 		CHECK(weights(0) == 0.0125);
 		CHECK(weights(1) == 0.0125);
 		CHECK(weights(2) == 0.025);
 	}
 	SUBCASE("Multiple triangles") {
-		const Eigen::MatrixX3d vertices{{0.0, 0.0, 0.0},
-		                                {1.0, 0.0, 0.0},
-		                                {0.5, std::numbers::sqrt3 / 2.0, 0.0},
-		                                {0.5, 0.1, 0.0}};
-		const Eigen::MatrixX3i faces{{0, 1, 2}, {0, 1, 3}};
-		Eigen::MatrixX3d weights;
+		const RowMatrixX3d vertices{{0.0, 0.0, 0.0},
+		                            {1.0, 0.0, 0.0},
+		                            {0.5, std::numbers::sqrt3 / 2.0, 0.0},
+		                            {0.5, 0.1, 0.0}};
+		const RowMatrixX3i faces{{0, 1, 2}, {0, 1, 3}};
+		RowMatrixX3d weights;
 		mesh::voronoi_area(vertices, faces, weights);
 		CHECK(weights.rows() == faces.rows());
 		CHECK(weights.cols() == 3);
-		const double one_third_area = std::numbers::sqrt3 / 12.0;
+		constexpr double one_third_area = std::numbers::sqrt3 / 12.0;
 		CHECK(weights(0, 0) == doctest::Approx(one_third_area));
 		CHECK(weights(0, 1) == doctest::Approx(one_third_area));
 		CHECK(weights(0, 2) == doctest::Approx(one_third_area));
@@ -62,37 +76,37 @@ TEST_CASE("Test Voronoi area function") {
 		CHECK(weights(1, 2) == 0.025);
 	}
 	SUBCASE("Colocated vertices") {
-		const Eigen::MatrixX3d vertices{
+		const RowMatrixX3d vertices{
 			{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
-		const Eigen::MatrixX3i faces{{0, 1, 2}};
-		Eigen::MatrixX3d weights;
+		const RowMatrixX3i faces{{0, 1, 2}};
+		RowMatrixX3d weights;
 		mesh::voronoi_area(vertices, faces, weights);
 		CHECK(weights(0) == 0.0);
 		CHECK(weights(1) == 0.0);
 		CHECK(weights(2) == 0.0);
 	}
 	SUBCASE("Face singularity") {
-		const Eigen::MatrixX3d vertices{
+		const RowMatrixX3d vertices{
 			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 0.1, 0.0}};
-		const Eigen::MatrixX3i faces{{0, 0, 0}};
-		Eigen::MatrixX3d weights;
+		const RowMatrixX3i faces{{0, 0, 0}};
+		RowMatrixX3d weights;
 		mesh::voronoi_area(vertices, faces, weights);
 		CHECK(weights(0) == 0.0);
 		CHECK(weights(1) == 0.0);
 		CHECK(weights(2) == 0.0);
 	}
 	SUBCASE("Colinear vertices") {
-		const Eigen::MatrixX3d vertices{
+		const RowMatrixX3d vertices{
 			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 0.0, 0.0}};
-		const Eigen::MatrixX3i faces{{0, 1, 2}};
-		Eigen::MatrixX3d weights;
+		const RowMatrixX3i faces{{0, 1, 2}};
+		RowMatrixX3d weights;
 		mesh::voronoi_area(vertices, faces, weights);
 		CHECK(weights(0) == 0.0);
 		CHECK(weights(1) == 0.0);
 		CHECK(weights(2) == 0.0);
 	}
 	SUBCASE("Empty face array") {
-		const Eigen::MatrixX3d vertices{
+		const RowMatrixX3d vertices{
 			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 0.0, 0.0}};
 		const Eigen::MatrixXi faces(0, 0);
 		Eigen::MatrixXd weights;
@@ -101,7 +115,7 @@ TEST_CASE("Test Voronoi area function") {
 	}
 	SUBCASE("Empty vertex array") {
 		const Eigen::MatrixXd vertices(0, 0);
-		const Eigen::MatrixX3i faces{{0, 1, 2}};
+		const RowMatrixX3i faces{{0, 1, 2}};
 		Eigen::MatrixXd weights;
 		mesh::voronoi_area(vertices, faces, weights);
 		CHECK(weights(0) == 0.0);
@@ -110,18 +124,18 @@ TEST_CASE("Test Voronoi area function") {
 	}
 	SUBCASE("2D vertex array") {
 		const Eigen::MatrixXd vertices{{0.0, 0.0}, {1.0, 0.0}, {0.5, 0.1}};
-		const Eigen::MatrixX3i faces{{0, 1, 2}};
-		Eigen::MatrixX3d weights;
+		const RowMatrixX3i faces{{0, 1, 2}};
+		RowMatrixX3d weights;
 		mesh::voronoi_area(vertices, faces, weights);
 		CHECK(weights(0) == 0.0125);
 		CHECK(weights(1) == 0.0125);
 		CHECK(weights(2) == 0.025);
 	}
 	SUBCASE("Improperly sized face array") {
-		const Eigen::MatrixX3d vertices{
+		const RowMatrixX3d vertices{
 			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 0.1, 0.0}};
 		const Eigen::MatrixXi faces{{0, 1}};
-		Eigen::MatrixX3d weights;
+		RowMatrixX3d weights;
 		CHECK_THROWS_AS(mesh::voronoi_area(vertices, faces, weights),
 		                std::invalid_argument);
 	}
