@@ -1,5 +1,0 @@
----
-# Tests use a lot of "magic numbers", so we disable it here.
-InheritParentConfig: true
-Checks: '-cppcoreguidelines-avoid-magic-numbers'
-...

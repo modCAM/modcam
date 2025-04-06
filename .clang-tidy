@@ -5,18 +5,15 @@ Checks: >
     cert-*,
     clang-analyzer-*,
     cppcoreguidelines-*,
+    -cppcoreguidelines-avoid-magic-numbers,
     hicpp-*,
     misc-*,
     modernize-*,
     performance-*,
     portability-*
 CheckOptions:
-    - {
-        key: misc-include-cleaner.IgnoreHeaders,
-        value: "Eigen/.*"
-      }
+    - { key: misc-include-cleaner.IgnoreHeaders, value: "Eigen/.*" }
 
-WarningsAsErrors: ''
-HeaderFilterRegex: ''
+WarningsAsErrors: ""
+HeaderFilterRegex: ""
 FormatStyle: file
-...
