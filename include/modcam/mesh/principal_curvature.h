@@ -21,10 +21,6 @@
 #include <Eigen/Eigenvalues>
 #include <Eigen/Geometry>
 #include <Eigen/QR>
-#include <Eigen/src/Core/Map.h>
-#include <Eigen/src/Core/Matrix.h>
-#include <Eigen/src/Core/util/Constants.h>
-#include <Eigen/src/Core/util/Meta.h>
 #include <igl/local_basis.h>
 #include <igl/principal_curvature.h>
 
