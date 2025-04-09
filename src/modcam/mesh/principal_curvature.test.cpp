@@ -157,14 +157,14 @@ TEST_CASE("Test principal curvature function") {
 		const double y3 = radius * std::sin(3.0 * 2.0 * std::numbers::pi / 6.0);
 		const double y4 = radius * std::sin(4.0 * 2.0 * std::numbers::pi / 6.0);
 		const double y5 = radius * std::sin(5.0 * 2.0 * std::numbers::pi / 6.0);
-		Eigen::MatrixX3d vertices{{x0, y0, 0.0}, {x0, y0, 1.0}, {x1, y1, 0.0},
-		                          {x1, y1, 1.0}, {x2, y2, 0.0}, {x2, y2, 1.0},
-		                          {x3, y3, 0.0}, {x3, y3, 1.0}, {x4, y4, 0.0},
-		                          {x4, y4, 1.0}, {x5, y5, 0.0}, {x5, y5, 1.0}};
-		Eigen::MatrixX3i faces{{1, 0, 2},   {2, 3, 1},   {3, 2, 4},
-		                       {4, 5, 3},   {5, 4, 6},   {6, 7, 5},
-		                       {7, 6, 8},   {8, 9, 7},   {9, 8, 10},
-		                       {10, 11, 9}, {11, 10, 0}, {0, 1, 11}};
+		const Eigen::MatrixX3d vertices{
+			{x0, y0, 0.0}, {x0, y0, 1.0}, {x1, y1, 0.0}, {x1, y1, 1.0},
+			{x2, y2, 0.0}, {x2, y2, 1.0}, {x3, y3, 0.0}, {x3, y3, 1.0},
+			{x4, y4, 0.0}, {x4, y4, 1.0}, {x5, y5, 0.0}, {x5, y5, 1.0}};
+		const Eigen::MatrixX3i faces{{1, 0, 2},   {2, 3, 1},   {3, 2, 4},
+		                             {4, 5, 3},   {5, 4, 6},   {6, 7, 5},
+		                             {7, 6, 8},   {8, 9, 7},   {9, 8, 10},
+		                             {10, 11, 9}, {11, 10, 0}, {0, 1, 11}};
 		Eigen::MatrixX3d pd1;
 		Eigen::MatrixX3d pd2;
 		Eigen::VectorXd pv1;
@@ -176,9 +176,9 @@ TEST_CASE("Test principal curvature function") {
 		CHECK(pv2.rows() == num_vertices);
 		CHECK(pv2.cols() == 1);
 		CHECK(pd1.rows() == num_vertices);
-		CHECK(pd1.cols() == 2);
+		CHECK(pd1.cols() == 3);
 		CHECK(pd2.rows() == num_vertices);
-		CHECK(pd2.cols() == 2);
+		CHECK(pd2.cols() == 3);
 		for (int i = 0; i < vertices.cols(); i++) {
 			CHECK(pv1(i) == doctest::Approx(0.0));
 			CHECK(pv2(i) == doctest::Approx(1.0 / radius));

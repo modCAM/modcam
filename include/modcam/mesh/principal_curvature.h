@@ -13,19 +13,18 @@
 #ifndef PRINCIPAL_CURVATURE_H
 #define PRINCIPAL_CURVATURE_H
 
-#include <Eigen/Core>
-#include <Eigen/src/Core/Array.h>
-#include <Eigen/src/Core/Matrix.h>
-#include <Eigen/src/Core/MatrixBase.h>
-
 #include "modcam/mesh/per_vertex_basis.h"
 #include "modcam/mesh/per_vertex_normals.h"
 #include "modcam/mesh/voronoi_area.h"
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <Eigen/Eigenvalues>
 #include <Eigen/Geometry>
+#include <Eigen/QR>
+#include <Eigen/src/Core/Map.h>
+#include <Eigen/src/Core/Matrix.h>
 #include <Eigen/src/Core/util/Constants.h>
+#include <Eigen/src/Core/util/Meta.h>
 #include <igl/local_basis.h>
 #include <igl/principal_curvature.h>
 
@@ -121,6 +120,7 @@ void principal_curvature_rus2004(const Eigen::MatrixBase<DerivedV> &vertices,
 	//                                                 [b, c]]
 	auto num_faces = faces.rows();
 	RowMatrixF3 second_fundamental_fb;
+	second_fundamental_fb.resize(num_faces, 3);
 	for (Eigen::Index i = 0; i < num_faces; i++) {
 		Eigen::Matrix<typename DerivedV::Scalar, 6, 3> A{
 			{e0_b0(i), e0_b1(i), 0.0}, {0.0, e0_b0(i), e0_b1(i)},
@@ -133,9 +133,10 @@ void principal_curvature_rus2004(const Eigen::MatrixBase<DerivedV> &vertices,
 		     (normal0.row(i) - normal2.row(i)).dot(face_basis1.row(i)),
 		     (normal1.row(i) - normal0.row(i)).dot(face_basis0.row(i)),
 		     (normal1.row(i) - normal0.row(i)).dot(face_basis1.row(i))}};
-		second_fundamental_fb.row(i) =
-			(A.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b))
-				.transpose();
+		Eigen::CompleteOrthogonalDecomposition<
+			typename Eigen::Matrix<typename DerivedV::Scalar, 6, 3>>
+			cod(A);
+		second_fundamental_fb.row(i) = cod.solve(b).transpose();
 	}
 
 	RowMatrixV3 vertex_basis0;
@@ -150,11 +151,13 @@ void principal_curvature_rus2004(const Eigen::MatrixBase<DerivedV> &vertices,
 	auto num_vertices = vertices.rows();
 	Eigen::Array<typename DerivedV::Scalar, DerivedV::RowsAtCompileTime, 1>
 		sum_weights{
-			Eigen::Array<typename DerivedV::Scalar, Eigen::Dynamic, 1>::Zero(
-				num_vertices)};
-	Eigen::Matrix<typename DerivedV::Scalar, Eigen::Dynamic, 3, Eigen::RowMajor>
+			Eigen::Array<typename DerivedV::Scalar, DerivedV::RowsAtCompileTime,
+	                     1>::Zero(num_vertices)};
+	Eigen::Matrix<typename DerivedV::Scalar, DerivedV::RowsAtCompileTime, 3,
+	              Eigen::RowMajor>
 		second_fundamental_vb{
-			Eigen::Matrix<typename DerivedV::Scalar, Eigen::Dynamic, 3,
+			Eigen::Matrix<typename DerivedV::Scalar,
+	                      DerivedV::RowsAtCompileTime, 3,
 	                      Eigen::RowMajor>::Zero(num_vertices, 3)};
 	for (Eigen::Index row = 0; row < num_faces; row++) {
 		for (Eigen::Index col = 0; col < vertices_per_face; col++) {
@@ -187,10 +190,10 @@ void principal_curvature_rus2004(const Eigen::MatrixBase<DerivedV> &vertices,
 			auto a = second_fundamental_fb(row, 0) * vb0_fb0 * vb0_fb0 +
 			         second_fundamental_fb(row, 1) * 2.0 * vb0_fb0 * vb0_fb1 +
 			         second_fundamental_fb(row, 2) * vb0_fb1 * vb0_fb1;
-			double b = second_fundamental_fb(row, 0) * vb0_fb0 * vb1_fb0 +
-			           second_fundamental_fb(row, 1) * vb0_fb0 * vb1_fb1 +
-			           second_fundamental_fb(row, 1) * vb0_fb1 * vb1_fb0 +
-			           second_fundamental_fb(row, 2) * vb0_fb1 * vb1_fb1;
+			auto b = second_fundamental_fb(row, 0) * vb0_fb0 * vb1_fb0 +
+			         second_fundamental_fb(row, 1) * vb0_fb0 * vb1_fb1 +
+			         second_fundamental_fb(row, 1) * vb0_fb1 * vb1_fb0 +
+			         second_fundamental_fb(row, 2) * vb0_fb1 * vb1_fb1;
 			auto c = second_fundamental_fb(row, 0) * vb1_fb0 * vb1_fb0 +
 			         second_fundamental_fb(row, 1) * vb1_fb0 * vb1_fb1 +
 			         second_fundamental_fb(row, 2) * vb1_fb1 * vb1_fb1;
@@ -209,9 +212,9 @@ void principal_curvature_rus2004(const Eigen::MatrixBase<DerivedV> &vertices,
 	pd2.derived().resize(num_vertices, 3);
 	Eigen::SelfAdjointEigenSolver<Eigen::Matrix2<typename DerivedV::Scalar>> es;
 	for (Eigen::Index row = 0; row < num_vertices; row++) {
-		double a{second_fundamental_vb(row, 0) / sum_weights(row)};
-		double b{second_fundamental_vb(row, 1) / sum_weights(row)};
-		double c{second_fundamental_vb(row, 2) / sum_weights(row)};
+		auto a = second_fundamental_vb(row, 0) / sum_weights(row);
+		auto b = second_fundamental_vb(row, 1) / sum_weights(row);
+		auto c = second_fundamental_vb(row, 2) / sum_weights(row);
 		es.compute(Eigen::Matrix2<typename DerivedV::Scalar>{{a, b}, {b, c}});
 		Eigen::Vector2<typename DerivedV::Scalar> eigval{es.eigenvalues()};
 		pv1(row) = eigval(0);
