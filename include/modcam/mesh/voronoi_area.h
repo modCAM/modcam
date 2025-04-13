@@ -31,9 +31,9 @@ namespace modcam::mesh {
  * Compute the Voronoi cell areas for the triangles in a mesh as described in
  * @cite Meyer2003.
  *
- * @param[in] vertices #V-by-3 matrix of mesh vertex coordinates
- * @param[in] faces #F-by-3 matrix of face (triangle) indices
- * @param[out] v_area #F-by-3 matrix of the Voronoi area of each vertex in each
+ * @param[in] vertices V-by-3 matrix of mesh vertex coordinates
+ * @param[in] faces F-by-3 matrix of face (triangle) indices
+ * @param[out] v_area F-by-3 matrix of the Voronoi area of each vertex in each
  * triangle
  */
 template <typename DerivedV, typename DerivedF, typename DerivedVA>

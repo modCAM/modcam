@@ -26,8 +26,8 @@ namespace modcam::utility {
  * to it. This function, while not strictly random, creates, for all intents and
  * purposes, a random vector that is orthogonal to the given vector.
  *
- * @param[in] vectors #V-by-3 matrix, where each row represents a 3D vector
- * @param[out] ortho_vectors #V-by-3 matrix of unit vectors orthogonal to the
+ * @param[in] vectors V-by-3 matrix, where each row represents a 3D vector
+ * @param[out] ortho_vectors V-by-3 matrix of unit vectors orthogonal to the
  * input vectors
  */
 template <typename DerivedVec, typename DerivedOrtho>

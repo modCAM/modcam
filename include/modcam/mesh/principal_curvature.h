@@ -31,19 +31,16 @@
 
 namespace modcam::mesh {
 
-using Curvature = std::tuple<Eigen::VectorXd, Eigen::VectorXd, Eigen::MatrixXd,
-                             Eigen::MatrixXd>;
-
 /**
  * Compute the (vertex) principal curvature using the algorithm described in
  * @cite Rusinkiewicz2004.
  *
- * @param[in] vertices #V-by-3 matrix of mesh vertex coordinates
- * @param[in] faces #F-by-3 matrix of face (triangle) indices
- * @param[out] pd1 #V-by-3 maximal curvature direction for each vertex.
- * @param[out] pd2 #V-by-3 minimal curvature direction for each vertex.
- * @param[out] pv1 #V-by-1 maximal curvature value for each vertex.
- * @param[out] pv2 #V-by-1 minimal curvature value for each vertex.
+ * @param[in] vertices V-by-3 matrix of mesh vertex coordinates
+ * @param[in] faces F-by-3 matrix of face (triangle) indices
+ * @param[out] pd1 V-by-3 maximal curvature direction for each vertex.
+ * @param[out] pd2 V-by-3 minimal curvature direction for each vertex.
+ * @param[out] pv1 V-by-1 maximal curvature value for each vertex.
+ * @param[out] pv2 V-by-1 minimal curvature value for each vertex.
  */
 template <typename DerivedV, typename DerivedF, typename DerivedPD,
           typename DerivedPV>

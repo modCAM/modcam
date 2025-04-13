@@ -43,5 +43,7 @@ sphinx_build(
 add_dependencies(modCAM_sphinx_docs modCAM_doxygen_docs)
 
 # Add an install target to install the docs
-install(DIRECTORY ${SPHINX_BUILD_DIR}
-DESTINATION ${CMAKE_INSTALL_DOCDIR})
+install(
+	DIRECTORY ${SPHINX_BUILD_DIR}
+	DESTINATION ${CMAKE_INSTALL_DOCDIR}
+)
