@@ -17,9 +17,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-#include <Eigen/src/Core/Matrix.h>
-#include <Eigen/src/Core/PlainObjectBase.h>
-#include <Eigen/src/Core/util/Constants.h>
+
 #include <igl/edge_lengths.h>
 
 #include <limits>
@@ -39,16 +37,17 @@ void per_vertex_normals(const Eigen::MatrixBase<DerivedV> &vertices,
                         const Eigen::MatrixBase<DerivedF> &faces,
                         Eigen::PlainObjectBase<DerivedN> &normals) {
 
-	if (faces.size() == 0 || vertices.size() == 0) {
+	if (vertices.size() == 0) {
 		normals.derived().resize(0, 3);
 		return;
 	}
 
-	using RowMatrixX3 =
-		Eigen::Matrix<typename DerivedV::Scalar, DerivedV::RowsAtCompileTime, 3,
-	                  Eigen::RowMajor>;
+	using RowMatrixX3 = Eigen::Matrix<typename DerivedV::Scalar, Eigen::Dynamic,
+	                                  3, Eigen::RowMajor>;
 	using RowVector3 = Eigen::RowVector3<typename DerivedV::Scalar>;
 
+	// Although this is technically a #V-by-3 matrix, igl::edge_lengths requires
+	// that it have a dynamic number of rows.
 	RowMatrixX3 edge_squared;
 	igl::edge_lengths(vertices, faces, edge_squared);
 	edge_squared = edge_squared.cwiseProduct(edge_squared);

@@ -21,10 +21,12 @@
 #include <Eigen/Eigenvalues>
 #include <Eigen/Geometry>
 #include <Eigen/QR>
+#include <Eigen/src/Core/util/Constants.h>
 #include <igl/local_basis.h>
 #include <igl/principal_curvature.h>
 
 #include <cmath>
+#include <limits>
 #include <tuple>
 
 namespace modcam::mesh {
@@ -52,11 +54,23 @@ void principal_curvature_rus2004(const Eigen::MatrixBase<DerivedV> &vertices,
                                  Eigen::PlainObjectBase<DerivedPV> &pv1,
                                  Eigen::PlainObjectBase<DerivedPV> &pv2) {
 
-	if (faces.size() == 0 || vertices.size() == 0) {
+	if (vertices.size() == 0) {
 		pd1.derived().resize(0, 3);
 		pd2.derived().resize(0, 3);
 		pv1.derived().resize(0, 1);
 		pv2.derived().resize(0, 1);
+		return;
+	}
+
+	if (faces.size() == 0) {
+		pd1.setConstant(
+			std::numeric_limits<typename DerivedPD::Scalar>::quiet_NaN());
+		pd2.setConstant(
+			std::numeric_limits<typename DerivedPD::Scalar>::quiet_NaN());
+		pv1.setConstant(
+			std::numeric_limits<typename DerivedPV::Scalar>::quiet_NaN());
+		pv2.setConstant(
+			std::numeric_limits<typename DerivedPV::Scalar>::quiet_NaN());
 		return;
 	}
 
@@ -85,11 +99,13 @@ void principal_curvature_rus2004(const Eigen::MatrixBase<DerivedV> &vertices,
 	RowMatrixF3 edge2{vertices(faces.col(1).array(), Eigen::all) -
 	                  vertices(faces.col(0).array(), Eigen::all)};
 
-	using RowMatrixX3 = Eigen::MatrixX3<typename DerivedV::Scalar>;
+	using MatrixF3 =
+		Eigen::Matrix<typename DerivedV::Scalar, DerivedF::RowsAtCompileTime, 3,
+	                  Eigen::RowMajor>;
 
-	RowMatrixX3 face_basis0;
-	RowMatrixX3 face_basis1;
-	RowMatrixX3 face_basis2;
+	RowMatrixF3 face_basis0;
+	RowMatrixF3 face_basis1;
+	RowMatrixF3 face_basis2;
 	igl::local_basis(vertices, faces, face_basis0, face_basis1, face_basis2);
 
 	using VectorF =

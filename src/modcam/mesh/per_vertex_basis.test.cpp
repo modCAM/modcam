@@ -12,8 +12,10 @@
 
 #include "modcam/mesh/per_vertex_basis.h"
 
-#include <Eigen/Geometry>
 #include <doctest/doctest.h>
+
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 #include <cmath>
 
@@ -74,6 +76,22 @@ TEST_CASE("Test per-vertex basis function") {
 		Eigen::RowVector3d b1_x_b2 = b1.cross(b2);
 		for (Eigen::Index i = 0; i < b1_x_b2.size(); i++) {
 			CHECK(b1_x_b2(i) == doctest::Approx(b0(i)));
+		}
+	}
+	SUBCASE("Fixed size, column major matrices") {
+		Eigen::Matrix<double, 3, 3> normal_vectors{
+			{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}};
+		Eigen::Matrix<double, 3, 3> b0;
+		Eigen::Matrix<double, 3, 3> b1;
+		Eigen::Matrix<double, 3, 3> b2;
+		mesh::per_vertex_basis(normal_vectors, b0, b1, b2);
+		CHECK((b2.array() == normal_vectors.rowwise().normalized().array())
+		          .all());
+		for (Eigen::Index r = 0; r < b2.rows(); r++) {
+			CHECK((b0.row(r).cross(b1.row(r)).array() == b2.row(r).array())
+			          .all());
+			CHECK((b1.row(r).cross(b2.row(r)).array() == b0.row(r).array())
+			          .all());
 		}
 	}
 }

@@ -17,17 +17,13 @@
 
 #include <Eigen/Core>
 
-#include <Eigen/src/Core/Array.h>
-#include <Eigen/src/Core/Matrix.h>
-#include <Eigen/src/Core/PlainObjectBase.h>
-#include <Eigen/src/Core/util/Constants.h>
 #include <igl/cotmatrix_entries.h>
 #include <igl/doublearea.h>
 #include <igl/edge_lengths.h>
 #include <igl/internal_angles.h>
 
+#include <cassert>
 #include <numbers>
-#include <stdexcept>
 
 namespace modcam::mesh {
 
@@ -51,15 +47,9 @@ void voronoi_area(const Eigen::MatrixBase<DerivedV> &vertices,
 	}
 
 	auto vertices_per_face = faces.cols();
-	if (vertices_per_face != 3) {
-		throw std::invalid_argument(
-			"There should be three vertices per face, i.e. the faces array "
-			"should have three columns.");
-	}
-
-	using RowMatrixX3 =
-		Eigen::Matrix<typename DerivedVA::Scalar, DerivedVA::RowsAtCompileTime,
-	                  3, Eigen::RowMajor>;
+	assert(vertices_per_face == 3 &&
+	       "There should be three vertices per face, i.e. the faces array "
+	       "should have three columns.");
 
 	auto num_faces = faces.rows();
 	v_area.derived().resize(num_faces, vertices_per_face);

@@ -17,7 +17,6 @@
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-#include <Eigen/src/Core/PlainObjectBase.h>
 
 namespace modcam::mesh {
 

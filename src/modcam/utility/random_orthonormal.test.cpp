@@ -13,6 +13,7 @@
 #include "modcam/utility/random_orthonormal.h"
 
 #include <Eigen/Core>
+#include <Eigen/src/Core/Matrix.h>
 #include <Eigen/src/Core/util/Constants.h>
 #include <doctest/doctest.h>
 
@@ -21,16 +22,31 @@
 namespace modcam {
 using RowMatrixX3f = Eigen::Matrix<float, Eigen::Dynamic, 3, Eigen::RowMajor>;
 TEST_CASE("Test random orthonormal") {
-	const RowMatrixX3f vectors{{1.0F, 0.0F, 0.0F},
-	                           {0.0F, 1.0F, 0.0F},
-	                           {0.0F, 0.0F, 1.0F},
-	                           {2.0F, 1.0F, -1.0F}};
-	RowMatrixX3f ortho_vectors;
-	utility::random_orthonormal(vectors, ortho_vectors);
-	const Eigen::VectorXf dot_prod =
-		(vectors.cwiseProduct(ortho_vectors)).rowwise().sum();
-	for (auto v : dot_prod) {
-		CHECK(v == doctest::Approx(0.0F));
+	SUBCASE("Dynamic size, row-major matrix") {
+		const RowMatrixX3f vectors{{1.0F, 0.0F, 0.0F},
+		                           {0.0F, 1.0F, 0.0F},
+		                           {0.0F, 0.0F, 1.0F},
+		                           {2.0F, 1.0F, -1.0F}};
+		RowMatrixX3f ortho_vectors;
+		utility::random_orthonormal(vectors, ortho_vectors);
+		const Eigen::VectorXf dot_prod =
+			(vectors.cwiseProduct(ortho_vectors)).rowwise().sum();
+		for (auto v : dot_prod) {
+			CHECK(v == doctest::Approx(0.0F));
+		}
+	}
+	SUBCASE("Fixed size, column-major matrix") {
+		const Eigen::Matrix<double, 4, 3> vectors{{1.0F, 0.0F, 0.0F},
+		                                          {0.0F, 1.0F, 0.0F},
+		                                          {0.0F, 0.0F, 1.0F},
+		                                          {2.0F, 1.0F, -1.0F}};
+		Eigen::Matrix<double, 4, 3> ortho_vectors;
+		utility::random_orthonormal(vectors, ortho_vectors);
+		const Eigen::Vector<double, 4> dot_prod =
+			(vectors.cwiseProduct(ortho_vectors)).rowwise().sum();
+		for (auto v : dot_prod) {
+			CHECK(v == doctest::Approx(0.0F));
+		}
 	}
 }
 } // namespace modcam
