@@ -23,6 +23,7 @@
 
 #include <cmath>
 #include <numbers>
+#include <string>
 #include <strstream>
 
 using namespace std::string_literals;
@@ -156,6 +157,10 @@ TEST_CASE("Test principal curvature function") {
 				CHECK(pv2(i) == doctest::Approx(1.0 / radius));
 			}
 		}
+		// Due to a bug in igl::local_basis, we must use row-major matrices. The
+		// next release of libigl will fix this issue.
+		// I tried to grab the latest libigl developments via FetchContent
+		// instead of vcpkg, but it broke the modCAM package.
 #if 0
 		SUBCASE("Fixed size, column-major matrix") {
 			Eigen::MatrixX3d vertices = Eigen::MatrixX3d::Zero(12, 3);
