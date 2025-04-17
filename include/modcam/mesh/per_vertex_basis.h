@@ -39,6 +39,15 @@ void per_vertex_basis(const Eigen::MatrixBase<DerivedN> &vertex_normals,
                       Eigen::PlainObjectBase<DerivedB> &b0,
                       Eigen::PlainObjectBase<DerivedB> &b1,
                       Eigen::PlainObjectBase<DerivedB> &b2) {
+	static_assert(DerivedN::ColsAtCompileTime == 3 ||
+	                  DerivedN::ColsAtCompileTime == Eigen::Dynamic,
+	              "vertex_normals must have 3 columns");
+	assert(vertex_normals.cols() == 3 && "vertex_normals must have 3 columns");
+
+	static_assert(DerivedB::ColsAtCompileTime == Eigen::Dynamic ||
+	                  DerivedB::ColsAtCompileTime == 3,
+	              "basis vectors must have 3 columns");
+
 	auto num_vectors = vertex_normals.rows();
 	b2.derived().resize(num_vectors, 3);
 	b2 = vertex_normals.rowwise()

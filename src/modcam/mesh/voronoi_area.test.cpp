@@ -127,13 +127,13 @@ TEST_CASE("Test Voronoi area function") {
 	SUBCASE("Empty face array") {
 		const RowMatrixX3d vertices{
 			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 0.0, 0.0}};
-		const Eigen::MatrixXi faces(0, 0);
+		const Eigen::MatrixXi faces(0, 3);
 		Eigen::MatrixXd weights;
 		mesh::voronoi_area(vertices, faces, weights);
 		CHECK(weights.size() == 0);
 	}
 	SUBCASE("Empty vertex array") {
-		const Eigen::MatrixXd vertices(0, 0);
+		const Eigen::MatrixXd vertices(0, 3);
 		const RowMatrixX3i faces{{0, 1, 2}};
 		Eigen::MatrixXd weights;
 		mesh::voronoi_area(vertices, faces, weights);

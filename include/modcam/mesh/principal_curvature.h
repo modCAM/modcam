@@ -21,13 +21,11 @@
 #include <Eigen/Eigenvalues>
 #include <Eigen/Geometry>
 #include <Eigen/QR>
-#include <Eigen/src/Core/util/Constants.h>
 #include <igl/local_basis.h>
 #include <igl/principal_curvature.h>
 
 #include <cmath>
 #include <limits>
-#include <tuple>
 
 namespace modcam::mesh {
 

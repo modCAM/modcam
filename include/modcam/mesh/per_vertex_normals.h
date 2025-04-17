@@ -36,6 +36,19 @@ template <typename DerivedV, typename DerivedF, typename DerivedN>
 void per_vertex_normals(const Eigen::MatrixBase<DerivedV> &vertices,
                         const Eigen::MatrixBase<DerivedF> &faces,
                         Eigen::PlainObjectBase<DerivedN> &normals) {
+	static_assert(DerivedV::ColsAtCompileTime == 3 ||
+	                  DerivedV::ColsAtCompileTime == Eigen::Dynamic,
+	              "vertices must have 3 columns");
+	assert(vertices.cols() == 3 && "vertices must have 3 columns");
+
+	static_assert(DerivedF::ColsAtCompileTime == 3 ||
+	                  DerivedF::ColsAtCompileTime == Eigen::Dynamic,
+	              "faces must have 3 columns");
+	assert(faces.cols() == 3 && "faces must have 3 columns");
+
+	static_assert(DerivedN::ColsAtCompileTime == Eigen::Dynamic ||
+	                  DerivedN::ColsAtCompileTime == 3,
+	              "normals must have 3 columns");
 
 	if (vertices.size() == 0) {
 		normals.derived().resize(0, 3);
