@@ -13,6 +13,7 @@
 #ifndef PRINCIPAL_CURVATURE_H
 #define PRINCIPAL_CURVATURE_H
 
+#include "modcam/mesh/concepts.h"
 #include "modcam/mesh/per_vertex_basis.h"
 #include "modcam/mesh/per_vertex_normals.h"
 #include "modcam/mesh/voronoi_area.h"
@@ -40,8 +41,11 @@ namespace modcam::mesh {
  * @param[out] pv1 V-by-1 maximal curvature value for each vertex.
  * @param[out] pv2 V-by-1 minimal curvature value for each vertex.
  */
-template <typename DerivedV, typename DerivedF, typename DerivedPD,
+template <Vertices3D DerivedV, TriangleFaces DerivedF, Vectors3D DerivedPD,
           typename DerivedPV>
+requires std::floating_point<typename DerivedPV::Scalar> &&
+         (DerivedPV::ColsAtCompileTime == 1 ||
+          DerivedPV::ColsAtCompileTime == Eigen::Dynamic)
 void principal_curvature_rus2004(const Eigen::MatrixBase<DerivedV> &vertices,
                                  const Eigen::MatrixBase<DerivedF> &faces,
                                  Eigen::PlainObjectBase<DerivedPD> &pd1,
@@ -70,18 +74,7 @@ void principal_curvature_rus2004(const Eigen::MatrixBase<DerivedV> &vertices,
 	}
 
 	Eigen::Index vertex_dim = vertices.cols();
-	if (vertex_dim != 3) {
-		throw std::invalid_argument(
-			"Vertices must be three-dimensional, i.e. the vertices array "
-			"should have three columns.");
-	}
-
 	Eigen::Index vertices_per_face = faces.cols();
-	if (vertices_per_face != 3) {
-		throw std::invalid_argument(
-			"There should be three vertices per face, i.e. the faces array "
-			"should have three columns.");
-	}
 
 	using RowMatrixF3 =
 		Eigen::Matrix<typename DerivedV::Scalar, DerivedF::RowsAtCompileTime, 3,

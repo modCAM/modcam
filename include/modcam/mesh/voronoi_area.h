@@ -13,6 +13,7 @@
 #ifndef VORONOI_AREA_H
 #define VORONOI_AREA_H
 
+#include "modcam/mesh/concepts.h"
 #include "modcam/utility/modulus.h"
 
 #include <Eigen/Core>
@@ -23,6 +24,7 @@
 #include <igl/internal_angles.h>
 
 #include <cassert>
+#include <concepts>
 #include <numbers>
 
 namespace modcam::mesh {
@@ -36,25 +38,17 @@ namespace modcam::mesh {
  * @param[out] v_area F-by-3 matrix of the Voronoi area of each vertex in each
  * triangle
  */
-template <typename DerivedV, typename DerivedF, typename DerivedVA>
+template <Vertices3D DerivedV, TriangleFaces DerivedF, typename DerivedVA>
+requires std::floating_point<typename DerivedVA::Scalar> &&
+         (DerivedVA::ColsAtCompileTime == 3 ||
+          DerivedVA::ColsAtCompileTime == Eigen::Dynamic)
 void voronoi_area(const Eigen::MatrixBase<DerivedV> &vertices,
                   const Eigen::MatrixBase<DerivedF> &faces,
                   Eigen::PlainObjectBase<DerivedVA> &v_area) {
-	static_assert(DerivedV::ColsAtCompileTime == 2 ||
-	                  DerivedV::ColsAtCompileTime == 3 ||
-	                  DerivedV::ColsAtCompileTime == Eigen::Dynamic,
-	              "vertices must have 3 columns");
 	assert(vertices.cols() == 2 ||
 	       vertices.cols() == 3 && "vertices must have 3 columns");
 
-	static_assert(DerivedF::ColsAtCompileTime == 3 ||
-	                  DerivedF::ColsAtCompileTime == Eigen::Dynamic,
-	              "faces must have 3 columns");
 	assert(faces.cols() == 3 && "faces must have 3 columns");
-
-	static_assert(DerivedVA::ColsAtCompileTime == Eigen::Dynamic ||
-	                  DerivedVA::ColsAtCompileTime == 3,
-	              "v_area must have 3 columns");
 
 	if (faces.size() == 0) {
 		v_area.derived().resize(0, 3);

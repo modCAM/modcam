@@ -13,6 +13,8 @@
 #ifndef MODULUS_H
 #define MODULUS_H
 
+#include <concepts>
+
 namespace modcam::utility {
 /**
  * Returns the positive remainder from the division of the first argument by the
@@ -28,7 +30,9 @@ namespace modcam::utility {
  * @return the positive remainder r, such that r == a - x * b, where x is
  * an integer
  */
-template <typename T> auto mod(T a, T b) -> T {
+template <typename T>
+requires std::signed_integral<T> || std::floating_point<T>
+auto mod(T a, T b) -> T {
 	return ((a %= b) < 0) ? a + b : a;
 }
 } // namespace modcam::utility

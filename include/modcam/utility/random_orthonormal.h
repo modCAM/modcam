@@ -13,12 +13,15 @@
 #ifndef RANDOM_ORTHONORMAL_H
 #define RANDOM_ORTHONORMAL_H
 
+#include "modcam/utility/concepts.h"
+
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
 #include <cmath>
 
 namespace modcam::utility {
+
 /**
  * Create normalized 3D vectors orthogonal to the input vectors.
  *
@@ -30,17 +33,10 @@ namespace modcam::utility {
  * @param[out] ortho_vectors V-by-3 matrix of unit vectors orthogonal to the
  * input vectors
  */
-template <typename DerivedVec, typename DerivedOrtho>
+template <Vectors3D DerivedVec, Vectors3D DerivedOrtho>
 void random_orthonormal(const Eigen::MatrixBase<DerivedVec> &vectors,
-                        Eigen::MatrixBase<DerivedOrtho> &ortho_vectors) {
-	static_assert(DerivedVec::ColsAtCompileTime == 3 ||
-	                  DerivedVec::ColsAtCompileTime == Eigen::Dynamic,
-	              "vectors must have 3 columns");
+                        Eigen::PlainObjectBase<DerivedOrtho> &ortho_vectors) {
 	assert(vectors.cols() == 3 && "vectors must have 3 columns");
-
-	static_assert(DerivedOrtho::ColsAtCompileTime == Eigen::Dynamic ||
-	                  DerivedOrtho::ColsAtCompileTime == 3,
-	              "ortho_vectors must have 3 columns");
 
 	ortho_vectors.derived().resize(vectors.rows(), 3);
 	ortho_vectors = vectors.template cast<typename DerivedOrtho::Scalar>();

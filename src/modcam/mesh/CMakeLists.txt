@@ -26,6 +26,7 @@ target_sources(
 		FILE_SET HEADERS
 		BASE_DIRS "${modCAM_SOURCE_DIR}/include"
 		FILES
+			"${modCAM_SOURCE_DIR}/include/modcam/mesh/concepts.h"
 			"${modCAM_SOURCE_DIR}/include/modcam/mesh/per_vertex_basis.h"
 			"${modCAM_SOURCE_DIR}/include/modcam/mesh/per_vertex_normals.h"
 			"${modCAM_SOURCE_DIR}/include/modcam/mesh/principal_curvature.h"

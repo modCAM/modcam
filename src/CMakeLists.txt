@@ -30,7 +30,3 @@ install(
     FILE_SET HEADERS
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
-
-if(MODCAM_ENABLE_LINTING)
-	configure_file(.clang-tidy .clang-tidy COPYONLY)
-endif()

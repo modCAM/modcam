@@ -13,8 +13,6 @@
 #include "modcam/utility/random_orthonormal.h"
 
 #include <Eigen/Core>
-#include <Eigen/src/Core/Matrix.h>
-#include <Eigen/src/Core/util/Constants.h>
 #include <doctest/doctest.h>
 
 #include <cmath>

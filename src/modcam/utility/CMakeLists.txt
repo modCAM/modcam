@@ -26,6 +26,7 @@ target_sources(
 		FILE_SET HEADERS
 		BASE_DIRS "${modCAM_SOURCE_DIR}/include"
 		FILES
+			"${modCAM_SOURCE_DIR}/include/modcam/utility/concepts.h"
 			"${modCAM_SOURCE_DIR}/include/modcam/utility/modulus.h"
 			"${modCAM_SOURCE_DIR}/include/modcam/utility/random_orthonormal.h"
 )
