@@ -25,6 +25,7 @@
 #include <igl/local_basis.h>
 #include <igl/principal_curvature.h>
 
+#include <cassert>
 #include <cmath>
 #include <limits>
 
@@ -52,6 +53,10 @@ void principal_curvature_rus2004(const Eigen::MatrixBase<DerivedV> &vertices,
                                  Eigen::PlainObjectBase<DerivedPD> &pd2,
                                  Eigen::PlainObjectBase<DerivedPV> &pv1,
                                  Eigen::PlainObjectBase<DerivedPV> &pv2) {
+
+	assert(vertices.cols() == 3 && "vertices must have 3 columns");
+
+	assert(faces.cols() == 3 && "faces must have 3 columns");
 
 	if (vertices.size() == 0) {
 		pd1.derived().resize(0, 3);
