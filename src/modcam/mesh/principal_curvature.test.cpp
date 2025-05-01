@@ -235,6 +235,12 @@ TEST_CASE("Test principal curvature function") {
 		for (int i = 0; i < vertices.cols(); i++) {
 			CHECK(pv1(i) == doctest::Approx(0.0));
 			CHECK(pv2(i) == doctest::Approx(1.0 / radius));
+			CHECK(pd1(i, 0) == doctest::Approx(0.0));
+			CHECK(pd1(i, 1) == doctest::Approx(0.0));
+			CHECK(std::abs(pd1(i, 2)) == doctest::Approx(1.0));
+			CHECK(pd2(i, 2) == doctest::Approx(0.0));
+			CHECK(std::sqrt(pd2(i, 0) * pd2(i, 0) + pd2(i, 1) * pd2(i, 1)) ==
+			      doctest::Approx(1.0));
 		}
 	}
 }
