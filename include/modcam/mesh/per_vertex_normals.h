@@ -41,10 +41,6 @@ void per_vertex_normals(const Eigen::MatrixBase<DerivedV> &vertices,
 
 	assert(faces.cols() == 3 && "faces must have 3 columns");
 
-	static_assert(DerivedN::ColsAtCompileTime == Eigen::Dynamic ||
-	                  DerivedN::ColsAtCompileTime == 3,
-	              "normals must have 3 columns");
-
 	if (vertices.size() == 0) {
 		normals.derived().resize(0, 3);
 		return;
