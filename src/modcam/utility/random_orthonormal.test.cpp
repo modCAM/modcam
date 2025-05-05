@@ -28,7 +28,7 @@ TEST_CASE("Test random orthonormal")
 		                           {0.0F, 0.0F, 1.0F},
 		                           {2.0F, 1.0F, -1.0F}};
 		RowMatrixX3f ortho_vectors;
-		utility::random_orthonormal(vectors, ortho_vectors);
+		utility::random_orthonormal(ortho_vectors, vectors);
 		const Eigen::VectorXf dot_prod =
 			(vectors.cwiseProduct(ortho_vectors)).rowwise().sum();
 		for (auto v : dot_prod) {
@@ -42,7 +42,7 @@ TEST_CASE("Test random orthonormal")
 		                                          {0.0F, 0.0F, 1.0F},
 		                                          {2.0F, 1.0F, -1.0F}};
 		Eigen::Matrix<double, 4, 3> ortho_vectors;
-		utility::random_orthonormal(vectors, ortho_vectors);
+		utility::random_orthonormal(ortho_vectors, vectors);
 		const Eigen::Vector<double, 4> dot_prod =
 			(vectors.cwiseProduct(ortho_vectors)).rowwise().sum();
 		for (auto v : dot_prod) {

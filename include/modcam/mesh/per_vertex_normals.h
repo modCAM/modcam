@@ -29,14 +29,14 @@ namespace modcam::mesh {
  * Compute the per-vertex normal vectors for a set of vertices and faces, as
  * described in @cite Max1999
  *
+ * @param[out] normals V-by-3 matrix of mesh vertex 3D normals
  * @param[in] vertices V-by-3 matrix of mesh vertex coordinates
  * @param[in] faces F-by-3 matrix of face (triangle) indices
- * @param[out] normals V-by-3 matrix of mesh vertex 3D normals
  */
 template <Vertices3D DerivedV, TriangleFaces DerivedF, Vectors3D DerivedN>
-void per_vertex_normals(const Eigen::MatrixBase<DerivedV> &vertices,
-                        const Eigen::MatrixBase<DerivedF> &faces,
-                        Eigen::PlainObjectBase<DerivedN> &normals)
+void per_vertex_normals(Eigen::PlainObjectBase<DerivedN> &normals,
+                        const Eigen::MatrixBase<DerivedV> &vertices,
+                        const Eigen::MatrixBase<DerivedF> &faces)
 {
 	assert(vertices.cols() == 3 && "vertices must have 3 columns");
 	assert(faces.cols() == 3 && "faces must have 3 columns");

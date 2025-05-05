@@ -37,7 +37,7 @@ TEST_CASE("Test Voronoi area function")
 		SUBCASE("Same numeric types")
 		{
 			RowMatrixX3d weights;
-			mesh::voronoi_area(vertices, faces, weights);
+			mesh::voronoi_area(weights, vertices, faces);
 			CHECK(weights(0) == doctest::Approx(one_third_area));
 			CHECK(weights(1) == doctest::Approx(one_third_area));
 			CHECK(weights(2) == doctest::Approx(one_third_area));
@@ -45,7 +45,7 @@ TEST_CASE("Test Voronoi area function")
 		SUBCASE("Different numeric types")
 		{
 			RowMatrixX3f weights;
-			mesh::voronoi_area(vertices, faces, weights);
+			mesh::voronoi_area(weights, vertices, faces);
 			CHECK(weights(0) == doctest::Approx(one_third_area));
 			CHECK(weights(1) == doctest::Approx(one_third_area));
 			CHECK(weights(2) == doctest::Approx(one_third_area));
@@ -57,7 +57,7 @@ TEST_CASE("Test Voronoi area function")
 			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 0.1, 0.0}};
 		const RowMatrixX3i faces{{0, 1, 2}};
 		RowMatrixX3d weights;
-		mesh::voronoi_area(vertices, faces, weights);
+		mesh::voronoi_area(weights, vertices, faces);
 		CHECK(weights(0) == 0.0125);
 		CHECK(weights(1) == 0.0125);
 		CHECK(weights(2) == 0.025);
@@ -70,7 +70,7 @@ TEST_CASE("Test Voronoi area function")
 		                            {0.5, 0.1, 0.0}};
 		const RowMatrixX3i faces{{0, 1, 2}, {0, 1, 3}};
 		RowMatrixX3d weights;
-		mesh::voronoi_area(vertices, faces, weights);
+		mesh::voronoi_area(weights, vertices, faces);
 		CHECK(weights.rows() == faces.rows());
 		CHECK(weights.cols() == 3);
 		constexpr double one_third_area = std::numbers::sqrt3 / 12.0;
@@ -90,7 +90,7 @@ TEST_CASE("Test Voronoi area function")
 			{0.5, 0.1, 0.0}};
 		const Eigen::Matrix<int, 2, 3> faces{{0, 1, 2}, {0, 1, 3}};
 		Eigen::Matrix<double, 2, 3> weights;
-		mesh::voronoi_area(vertices, faces, weights);
+		mesh::voronoi_area(weights, vertices, faces);
 		CHECK(weights.rows() == faces.rows());
 		CHECK(weights.cols() == 3);
 		constexpr double one_third_area = std::numbers::sqrt3 / 12.0;
@@ -107,7 +107,7 @@ TEST_CASE("Test Voronoi area function")
 			{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 		const RowMatrixX3i faces{{0, 1, 2}};
 		RowMatrixX3d weights;
-		mesh::voronoi_area(vertices, faces, weights);
+		mesh::voronoi_area(weights, vertices, faces);
 		CHECK(weights(0) == 0.0);
 		CHECK(weights(1) == 0.0);
 		CHECK(weights(2) == 0.0);
@@ -118,7 +118,7 @@ TEST_CASE("Test Voronoi area function")
 			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 0.1, 0.0}};
 		const RowMatrixX3i faces{{0, 0, 0}};
 		RowMatrixX3d weights;
-		mesh::voronoi_area(vertices, faces, weights);
+		mesh::voronoi_area(weights, vertices, faces);
 		CHECK(weights(0) == 0.0);
 		CHECK(weights(1) == 0.0);
 		CHECK(weights(2) == 0.0);
@@ -129,7 +129,7 @@ TEST_CASE("Test Voronoi area function")
 			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 0.0, 0.0}};
 		const RowMatrixX3i faces{{0, 1, 2}};
 		RowMatrixX3d weights;
-		mesh::voronoi_area(vertices, faces, weights);
+		mesh::voronoi_area(weights, vertices, faces);
 		CHECK(weights(0) == 0.0);
 		CHECK(weights(1) == 0.0);
 		CHECK(weights(2) == 0.0);
@@ -140,7 +140,7 @@ TEST_CASE("Test Voronoi area function")
 			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 0.0, 0.0}};
 		const Eigen::MatrixXi faces(0, 3);
 		Eigen::MatrixXd weights;
-		mesh::voronoi_area(vertices, faces, weights);
+		mesh::voronoi_area(weights, vertices, faces);
 		CHECK(weights.size() == 0);
 	}
 	SUBCASE("Empty vertex array")
@@ -148,7 +148,7 @@ TEST_CASE("Test Voronoi area function")
 		const Eigen::MatrixXd vertices(0, 3);
 		const RowMatrixX3i faces{{0, 1, 2}};
 		Eigen::MatrixXd weights;
-		mesh::voronoi_area(vertices, faces, weights);
+		mesh::voronoi_area(weights, vertices, faces);
 		CHECK(weights(0) == 0.0);
 		CHECK(weights(1) == 0.0);
 		CHECK(weights(2) == 0.0);
@@ -158,7 +158,7 @@ TEST_CASE("Test Voronoi area function")
 		const Eigen::MatrixXd vertices{{0.0, 0.0}, {1.0, 0.0}, {0.5, 0.1}};
 		const RowMatrixX3i faces{{0, 1, 2}};
 		RowMatrixX3d weights;
-		mesh::voronoi_area(vertices, faces, weights);
+		mesh::voronoi_area(weights, vertices, faces);
 		CHECK(weights(0) == 0.0125);
 		CHECK(weights(1) == 0.0125);
 		CHECK(weights(2) == 0.025);

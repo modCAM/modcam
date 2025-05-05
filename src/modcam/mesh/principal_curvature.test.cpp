@@ -71,7 +71,7 @@ TEST_CASE("Test principal curvature function")
 		RowMatrixX3d pd1;
 		Eigen::VectorXd pv1;
 		Eigen::VectorXd pv2;
-		mesh::principal_curvature_rus2004(vertices, faces, pd1, pd2, pv1, pv2);
+		mesh::principal_curvature_rus2004(pd1, pd2, pv1, pv2, vertices, faces);
 
 		Eigen::Index num_vertices{vertices.rows()};
 		CHECK(pv1.rows() == num_vertices);
@@ -96,7 +96,7 @@ TEST_CASE("Test principal curvature function")
 		RowMatrixX3d pd2;
 		Eigen::VectorXd pv1;
 		Eigen::VectorXd pv2;
-		mesh::principal_curvature_rus2004(vertices, faces, pd1, pd2, pv1, pv2);
+		mesh::principal_curvature_rus2004(pd1, pd2, pv1, pv2, vertices, faces);
 		CHECK(pv1.array().isNaN().all());
 		CHECK(pv2.array().isNaN().all());
 		CHECK(pd1.array().isNaN().all());
@@ -110,7 +110,7 @@ TEST_CASE("Test principal curvature function")
 		RowMatrixX3d pd2;
 		Eigen::VectorXd pv1;
 		Eigen::VectorXd pv2;
-		mesh::principal_curvature_rus2004(vertices, faces, pd1, pd2, pv1, pv2);
+		mesh::principal_curvature_rus2004(pd1, pd2, pv1, pv2, vertices, faces);
 		CHECK(pv1.size() == 0);
 		CHECK(pv2.size() == 0);
 		CHECK(pd1.size() == 0);
@@ -147,8 +147,8 @@ TEST_CASE("Test principal curvature function")
 			RowMatrixX3d pd2;
 			Eigen::VectorXd pv1;
 			Eigen::VectorXd pv2;
-			mesh::principal_curvature_rus2004(vertices, faces, pd1, pd2, pv1,
-			                                  pv2);
+			mesh::principal_curvature_rus2004(pd1, pd2, pv1, pv2, vertices,
+			                                  faces);
 			Eigen::Index num_vertices{vertices.rows()};
 			CHECK(pv1.rows() == num_vertices);
 			CHECK(pv1.cols() == 1);
@@ -168,7 +168,8 @@ TEST_CASE("Test principal curvature function")
 		// I tried to grab the latest libigl developments via FetchContent
 		// instead of vcpkg, but it broke the modCAM package.
 #if 0
-		SUBCASE("Fixed size, column-major matrix") {
+		SUBCASE("Fixed size, column-major matrix")
+		{
 			Eigen::MatrixX3d vertices = Eigen::MatrixX3d::Zero(12, 3);
 			vertices.col(0) = Eigen::sin(phi) * Eigen::cos(theta);
 			vertices.col(1) = Eigen::sin(phi) * Eigen::sin(theta);
@@ -184,8 +185,8 @@ TEST_CASE("Test principal curvature function")
 			Eigen::MatrixX3d pd2;
 			Eigen::VectorXd pv1;
 			Eigen::VectorXd pv2;
-			mesh::principal_curvature_rus2004(vertices, faces, pd1, pd2, pv1,
-			                                  pv2);
+			mesh::principal_curvature_rus2004(pd1, pd2, pv1, pv2, vertices,
+			                                  faces);
 			Eigen::Index num_vertices{vertices.rows()};
 			CHECK(pv1.rows() == num_vertices);
 			CHECK(pv1.cols() == 1);
@@ -229,7 +230,7 @@ TEST_CASE("Test principal curvature function")
 		RowMatrixX3d pd2;
 		Eigen::VectorXd pv1;
 		Eigen::VectorXd pv2;
-		mesh::principal_curvature_rus2004(vertices, faces, pd1, pd2, pv1, pv2);
+		mesh::principal_curvature_rus2004(pd1, pd2, pv1, pv2, vertices, faces);
 		Eigen::Index num_vertices{vertices.rows()};
 		CHECK(pv1.rows() == num_vertices);
 		CHECK(pv1.cols() == 1);

@@ -29,13 +29,13 @@ namespace modcam::utility {
  * to it. This function, while not strictly random, creates, for all intents and
  * purposes, a random vector that is orthogonal to the given vector.
  *
- * @param[in] vectors V-by-3 matrix, where each row represents a 3D vector
  * @param[out] ortho_vectors V-by-3 matrix of unit vectors orthogonal to the
  * input vectors
+ * @param[in] vectors V-by-3 matrix, where each row represents a 3D vector
  */
 template <Vectors3D DerivedVec, Vectors3D DerivedOrtho>
-void random_orthonormal(const Eigen::MatrixBase<DerivedVec> &vectors,
-                        Eigen::PlainObjectBase<DerivedOrtho> &ortho_vectors)
+void random_orthonormal(Eigen::PlainObjectBase<DerivedOrtho> &ortho_vectors,
+                        const Eigen::MatrixBase<DerivedVec> &vectors)
 {
 	assert(vectors.cols() == 3 && "vectors must have 3 columns");
 

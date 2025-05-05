@@ -33,18 +33,18 @@ namespace modcam::mesh {
  * Compute the Voronoi cell areas for the triangles in a mesh as described in
  * @cite Meyer2003.
  *
- * @param[in] vertices V-by-3 matrix of mesh vertex coordinates
- * @param[in] faces F-by-3 matrix of face (triangle) indices
  * @param[out] v_area F-by-3 matrix of the Voronoi area of each vertex in each
  * triangle
+ * @param[in] vertices V-by-3 matrix of mesh vertex coordinates
+ * @param[in] faces F-by-3 matrix of face (triangle) indices
  */
 template <Vertices3D DerivedV, TriangleFaces DerivedF, typename DerivedVA>
 requires std::floating_point<typename DerivedVA::Scalar> &&
          (DerivedVA::ColsAtCompileTime == 3 ||
           DerivedVA::ColsAtCompileTime == Eigen::Dynamic)
-void voronoi_area(const Eigen::MatrixBase<DerivedV> &vertices,
-                  const Eigen::MatrixBase<DerivedF> &faces,
-                  Eigen::PlainObjectBase<DerivedVA> &v_area)
+void voronoi_area(Eigen::PlainObjectBase<DerivedVA> &v_area,
+                  const Eigen::MatrixBase<DerivedV> &vertices,
+                  const Eigen::MatrixBase<DerivedF> &faces)
 {
 	assert(vertices.cols() == 2 ||
 	       vertices.cols() == 3 && "vertices must have 3 columns");

@@ -35,24 +35,24 @@ namespace modcam::mesh {
  * Compute the (vertex) principal curvature using the algorithm described in
  * @cite Rusinkiewicz2004.
  *
- * @param[in] vertices V-by-3 matrix of mesh vertex coordinates
- * @param[in] faces F-by-3 matrix of face (triangle) indices
  * @param[out] pd1 V-by-3 maximal curvature direction for each vertex.
  * @param[out] pd2 V-by-3 minimal curvature direction for each vertex.
  * @param[out] pv1 V-by-1 maximal curvature value for each vertex.
  * @param[out] pv2 V-by-1 minimal curvature value for each vertex.
+ * @param[in] vertices V-by-3 matrix of mesh vertex coordinates
+ * @param[in] faces F-by-3 matrix of face (triangle) indices
  */
 template <Vertices3D DerivedV, TriangleFaces DerivedF, Vectors3D DerivedPD,
           typename DerivedPV>
 requires std::floating_point<typename DerivedPV::Scalar> &&
          (DerivedPV::ColsAtCompileTime == 1 ||
           DerivedPV::ColsAtCompileTime == Eigen::Dynamic)
-void principal_curvature_rus2004(const Eigen::MatrixBase<DerivedV> &vertices,
-                                 const Eigen::MatrixBase<DerivedF> &faces,
-                                 Eigen::PlainObjectBase<DerivedPD> &pd1,
+void principal_curvature_rus2004(Eigen::PlainObjectBase<DerivedPD> &pd1,
                                  Eigen::PlainObjectBase<DerivedPD> &pd2,
                                  Eigen::PlainObjectBase<DerivedPV> &pv1,
-                                 Eigen::PlainObjectBase<DerivedPV> &pv2)
+                                 Eigen::PlainObjectBase<DerivedPV> &pv2,
+                                 const Eigen::MatrixBase<DerivedV> &vertices,
+                                 const Eigen::MatrixBase<DerivedF> &faces)
 {
 	assert(vertices.cols() == 3 && "vertices must have 3 columns");
 	assert(faces.cols() == 3 && "faces must have 3 columns");
@@ -115,7 +115,7 @@ void principal_curvature_rus2004(const Eigen::MatrixBase<DerivedV> &vertices,
 	                  Eigen::RowMajor>;
 
 	RowMatrixV3 vertex_normals;
-	mesh::per_vertex_normals(vertices, faces, vertex_normals);
+	mesh::per_vertex_normals(vertex_normals, vertices, faces);
 
 	RowMatrixF3 normal0{vertex_normals(faces.col(0).array(), Eigen::all)};
 	RowMatrixF3 normal1{vertex_normals(faces.col(1).array(), Eigen::all)};
@@ -146,12 +146,12 @@ void principal_curvature_rus2004(const Eigen::MatrixBase<DerivedV> &vertices,
 	RowMatrixV3 vertex_basis0;
 	RowMatrixV3 vertex_basis1;
 	RowMatrixV3 vertex_basis2;
-	mesh::per_vertex_basis(vertex_normals, vertex_basis0, vertex_basis1,
-	                       vertex_basis2);
+	mesh::per_vertex_basis(vertex_basis0, vertex_basis1, vertex_basis2,
+	                       vertex_normals);
 
 	// Compute the second fundamental form in the vertex basis frame.
 	RowMatrixF3 weights;
-	mesh::voronoi_area(vertices, faces, weights);
+	mesh::voronoi_area(weights, vertices, faces);
 	auto num_vertices = vertices.rows();
 	Eigen::Array<typename DerivedV::Scalar, DerivedV::RowsAtCompileTime, 1>
 		sum_weights{
