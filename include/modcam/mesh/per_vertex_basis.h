@@ -39,7 +39,8 @@ template <Vectors3D DerivedN, Vectors3D DerivedB>
 void per_vertex_basis(const Eigen::MatrixBase<DerivedN> &vertex_normals,
                       Eigen::PlainObjectBase<DerivedB> &b0,
                       Eigen::PlainObjectBase<DerivedB> &b1,
-                      Eigen::PlainObjectBase<DerivedB> &b2) {
+                      Eigen::PlainObjectBase<DerivedB> &b2)
+{
 	assert(vertex_normals.cols() == 3 && "vertex_normals must have 3 columns");
 
 	auto num_vectors = vertex_normals.rows();

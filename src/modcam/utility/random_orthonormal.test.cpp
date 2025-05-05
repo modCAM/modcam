@@ -19,8 +19,10 @@
 
 namespace modcam {
 using RowMatrixX3f = Eigen::Matrix<float, Eigen::Dynamic, 3, Eigen::RowMajor>;
-TEST_CASE("Test random orthonormal") {
-	SUBCASE("Dynamic size, row-major matrix") {
+TEST_CASE("Test random orthonormal")
+{
+	SUBCASE("Dynamic size, row-major matrix")
+	{
 		const RowMatrixX3f vectors{{1.0F, 0.0F, 0.0F},
 		                           {0.0F, 1.0F, 0.0F},
 		                           {0.0F, 0.0F, 1.0F},
@@ -33,7 +35,8 @@ TEST_CASE("Test random orthonormal") {
 			CHECK(v == doctest::Approx(0.0F));
 		}
 	}
-	SUBCASE("Fixed size, column-major matrix") {
+	SUBCASE("Fixed size, column-major matrix")
+	{
 		const Eigen::Matrix<double, 4, 3> vectors{{1.0F, 0.0F, 0.0F},
 		                                          {0.0F, 1.0F, 0.0F},
 		                                          {0.0F, 0.0F, 1.0F},

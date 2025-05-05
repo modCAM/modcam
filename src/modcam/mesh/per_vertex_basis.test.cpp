@@ -25,14 +25,17 @@ using RowMatrixX3d = Eigen::Matrix<double, Eigen::Dynamic, 3, Eigen::RowMajor>;
 using RowMatrixX3i = Eigen::Matrix<int, Eigen::Dynamic, 3, Eigen::RowMajor>;
 using RowMatrixX3f = Eigen::Matrix<float, Eigen::Dynamic, 3, Eigen::RowMajor>;
 
-TEST_CASE("Test per-vertex basis function") {
-	SUBCASE("Unit normals along the coordinate axes") {
+TEST_CASE("Test per-vertex basis function")
+{
+	SUBCASE("Unit normals along the coordinate axes")
+	{
 		// Expect ( z, -y, x)
 		//        (-z, -x, y)
 		//        ( y, -x, z)
 		RowMatrixX3d normal_vectors{
 			{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}};
-		SUBCASE("Same numeric type") {
+		SUBCASE("Same numeric type")
+		{
 			RowMatrixX3d b0;
 			RowMatrixX3d b1;
 			RowMatrixX3d b2;
@@ -46,7 +49,8 @@ TEST_CASE("Test per-vertex basis function") {
 				          .all());
 			}
 		}
-		SUBCASE("Different numeric types") {
+		SUBCASE("Different numeric types")
+		{
 			RowMatrixX3f b0;
 			RowMatrixX3f b1;
 			RowMatrixX3f b2;
@@ -62,7 +66,8 @@ TEST_CASE("Test per-vertex basis function") {
 			}
 		}
 	}
-	SUBCASE("Non-unit normal vector") {
+	SUBCASE("Non-unit normal vector")
+	{
 		const Eigen::RowVector3d normal_vector{{1.0, 1.0, 1.0}};
 		Eigen::RowVector3d b0;
 		Eigen::RowVector3d b1;
@@ -78,7 +83,8 @@ TEST_CASE("Test per-vertex basis function") {
 			CHECK(b1_x_b2(i) == doctest::Approx(b0(i)));
 		}
 	}
-	SUBCASE("Fixed size, column major matrices") {
+	SUBCASE("Fixed size, column major matrices")
+	{
 		Eigen::Matrix<double, 3, 3> normal_vectors{
 			{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}};
 		Eigen::Matrix<double, 3, 3> b0;

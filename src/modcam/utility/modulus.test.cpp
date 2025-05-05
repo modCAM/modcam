@@ -15,7 +15,8 @@
 #include <doctest/doctest.h>
 
 namespace modcam {
-TEST_CASE("Test modulus function") {
+TEST_CASE("Test modulus function")
+{
 	for (auto i = -6; i < 4; i += 3) {
 		CHECK(utility::mod(i, 3) == 0);
 		CHECK(utility::mod(i + 1, 3) == 1);

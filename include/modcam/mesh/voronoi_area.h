@@ -44,10 +44,10 @@ requires std::floating_point<typename DerivedVA::Scalar> &&
           DerivedVA::ColsAtCompileTime == Eigen::Dynamic)
 void voronoi_area(const Eigen::MatrixBase<DerivedV> &vertices,
                   const Eigen::MatrixBase<DerivedF> &faces,
-                  Eigen::PlainObjectBase<DerivedVA> &v_area) {
+                  Eigen::PlainObjectBase<DerivedVA> &v_area)
+{
 	assert(vertices.cols() == 2 ||
 	       vertices.cols() == 3 && "vertices must have 3 columns");
-
 	assert(faces.cols() == 3 && "faces must have 3 columns");
 
 	if (faces.size() == 0) {

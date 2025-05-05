@@ -25,21 +25,25 @@ using RowMatrixX3d = Eigen::Matrix<double, Eigen::Dynamic, 3, Eigen::RowMajor>;
 using RowMatrixX3i = Eigen::Matrix<int, Eigen::Dynamic, 3, Eigen::RowMajor>;
 using RowMatrixX3f = Eigen::Matrix<float, Eigen::Dynamic, 3, Eigen::RowMajor>;
 
-TEST_CASE("Test Voronoi area function") {
-	SUBCASE("Equilateral triangle") {
+TEST_CASE("Test Voronoi area function")
+{
+	SUBCASE("Equilateral triangle")
+	{
 		const RowMatrixX3d vertices{{0.0, 0.0, 0.0},
 		                            {1.0, 0.0, 0.0},
 		                            {0.5, std::numbers::sqrt3 / 2.0, 0.0}};
 		const RowMatrixX3i faces{{0, 1, 2}};
 		constexpr double one_third_area = std::numbers::sqrt3 / 12.0;
-		SUBCASE("Same numeric types") {
+		SUBCASE("Same numeric types")
+		{
 			RowMatrixX3d weights;
 			mesh::voronoi_area(vertices, faces, weights);
 			CHECK(weights(0) == doctest::Approx(one_third_area));
 			CHECK(weights(1) == doctest::Approx(one_third_area));
 			CHECK(weights(2) == doctest::Approx(one_third_area));
 		}
-		SUBCASE("Different numeric types") {
+		SUBCASE("Different numeric types")
+		{
 			RowMatrixX3f weights;
 			mesh::voronoi_area(vertices, faces, weights);
 			CHECK(weights(0) == doctest::Approx(one_third_area));
@@ -47,7 +51,8 @@ TEST_CASE("Test Voronoi area function") {
 			CHECK(weights(2) == doctest::Approx(one_third_area));
 		}
 	}
-	SUBCASE("Obtuse triangle") {
+	SUBCASE("Obtuse triangle")
+	{
 		const RowMatrixX3d vertices{
 			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 0.1, 0.0}};
 		const RowMatrixX3i faces{{0, 1, 2}};
@@ -57,7 +62,8 @@ TEST_CASE("Test Voronoi area function") {
 		CHECK(weights(1) == 0.0125);
 		CHECK(weights(2) == 0.025);
 	}
-	SUBCASE("Multiple triangles") {
+	SUBCASE("Multiple triangles")
+	{
 		const RowMatrixX3d vertices{{0.0, 0.0, 0.0},
 		                            {1.0, 0.0, 0.0},
 		                            {0.5, std::numbers::sqrt3 / 2.0, 0.0},
@@ -75,7 +81,8 @@ TEST_CASE("Test Voronoi area function") {
 		CHECK(weights(1, 1) == 0.0125);
 		CHECK(weights(1, 2) == 0.025);
 	}
-	SUBCASE("Multiple triangles - Fixed size, column-major matrices") {
+	SUBCASE("Multiple triangles - Fixed size, column-major matrices")
+	{
 		const Eigen::Matrix<double, 4, 3> vertices{
 			{0.0, 0.0, 0.0},
 			{1.0, 0.0, 0.0},
@@ -94,7 +101,8 @@ TEST_CASE("Test Voronoi area function") {
 		CHECK(weights(1, 1) == 0.0125);
 		CHECK(weights(1, 2) == 0.025);
 	}
-	SUBCASE("Colocated vertices") {
+	SUBCASE("Colocated vertices")
+	{
 		const RowMatrixX3d vertices{
 			{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 		const RowMatrixX3i faces{{0, 1, 2}};
@@ -104,7 +112,8 @@ TEST_CASE("Test Voronoi area function") {
 		CHECK(weights(1) == 0.0);
 		CHECK(weights(2) == 0.0);
 	}
-	SUBCASE("Face singularity") {
+	SUBCASE("Face singularity")
+	{
 		const RowMatrixX3d vertices{
 			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 0.1, 0.0}};
 		const RowMatrixX3i faces{{0, 0, 0}};
@@ -114,7 +123,8 @@ TEST_CASE("Test Voronoi area function") {
 		CHECK(weights(1) == 0.0);
 		CHECK(weights(2) == 0.0);
 	}
-	SUBCASE("Colinear vertices") {
+	SUBCASE("Colinear vertices")
+	{
 		const RowMatrixX3d vertices{
 			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 0.0, 0.0}};
 		const RowMatrixX3i faces{{0, 1, 2}};
@@ -124,7 +134,8 @@ TEST_CASE("Test Voronoi area function") {
 		CHECK(weights(1) == 0.0);
 		CHECK(weights(2) == 0.0);
 	}
-	SUBCASE("Empty face array") {
+	SUBCASE("Empty face array")
+	{
 		const RowMatrixX3d vertices{
 			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 0.0, 0.0}};
 		const Eigen::MatrixXi faces(0, 3);
@@ -132,7 +143,8 @@ TEST_CASE("Test Voronoi area function") {
 		mesh::voronoi_area(vertices, faces, weights);
 		CHECK(weights.size() == 0);
 	}
-	SUBCASE("Empty vertex array") {
+	SUBCASE("Empty vertex array")
+	{
 		const Eigen::MatrixXd vertices(0, 3);
 		const RowMatrixX3i faces{{0, 1, 2}};
 		Eigen::MatrixXd weights;
@@ -141,7 +153,8 @@ TEST_CASE("Test Voronoi area function") {
 		CHECK(weights(1) == 0.0);
 		CHECK(weights(2) == 0.0);
 	}
-	SUBCASE("2D vertex array") {
+	SUBCASE("2D vertex array")
+	{
 		const Eigen::MatrixXd vertices{{0.0, 0.0}, {1.0, 0.0}, {0.5, 0.1}};
 		const RowMatrixX3i faces{{0, 1, 2}};
 		RowMatrixX3d weights;

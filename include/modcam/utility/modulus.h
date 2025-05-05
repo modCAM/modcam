@@ -32,7 +32,8 @@ namespace modcam::utility {
  */
 template <typename T>
 requires std::signed_integral<T> || std::floating_point<T>
-auto mod(T a, T b) -> T {
+auto mod(T a, T b) -> T
+{
 	return ((a %= b) < 0) ? a + b : a;
 }
 } // namespace modcam::utility

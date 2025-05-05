@@ -35,7 +35,8 @@ namespace modcam::utility {
  */
 template <Vectors3D DerivedVec, Vectors3D DerivedOrtho>
 void random_orthonormal(const Eigen::MatrixBase<DerivedVec> &vectors,
-                        Eigen::PlainObjectBase<DerivedOrtho> &ortho_vectors) {
+                        Eigen::PlainObjectBase<DerivedOrtho> &ortho_vectors)
+{
 	assert(vectors.cols() == 3 && "vectors must have 3 columns");
 
 	ortho_vectors.derived().resize(vectors.rows(), 3);
@@ -60,6 +61,7 @@ void random_orthonormal(const Eigen::MatrixBase<DerivedVec> &vectors,
 	}
 	ortho_vectors.rowwise().normalize();
 }
+
 } // namespace modcam::utility
 
 #endif

@@ -25,7 +25,8 @@ using RowMatrixX3d = Eigen::Matrix<double, Eigen::Dynamic, 3, Eigen::RowMajor>;
 using RowMatrixX3i = Eigen::Matrix<int, Eigen::Dynamic, 3, Eigen::RowMajor>;
 using RowMatrixX3f = Eigen::Matrix<float, Eigen::Dynamic, 3, Eigen::RowMajor>;
 
-TEST_CASE("Test per-vertex normals function") {
+TEST_CASE("Test per-vertex normals function")
+{
 	constexpr auto pi = std::numbers::pi;
 	const auto r = 1.0 / (2.0 * std::sin(pi / 5.0));
 	using Array12d = Eigen::Array<double, 12, 1>;
@@ -38,7 +39,8 @@ TEST_CASE("Test per-vertex normals function") {
 	theta(Eigen::seq(1, 5)) = Array5d::LinSpaced(5, 0.0, 8.0 * pi / 5.0);
 	theta(Eigen::seq(6, 10)) = Array5d::LinSpaced(5, pi / 5.0, 9.0 * pi / 5.0);
 
-	SUBCASE("Icosahedron") {
+	SUBCASE("Icosahedron")
+	{
 		RowMatrixX3d vertices = RowMatrixX3d::Zero(12, 3);
 		vertices.col(0) = Eigen::sin(phi) * Eigen::cos(theta);
 		vertices.col(1) = Eigen::sin(phi) * Eigen::sin(theta);
@@ -61,7 +63,8 @@ TEST_CASE("Test per-vertex normals function") {
 			}
 		}
 	}
-	SUBCASE("Partial icosahedron") {
+	SUBCASE("Partial icosahedron")
+	{
 		RowMatrixX3d vertices = RowMatrixX3d::Zero(12, 3);
 		vertices.col(0) = Eigen::sin(phi) * Eigen::cos(theta);
 		vertices.col(1) = Eigen::sin(phi) * Eigen::sin(theta);
@@ -72,7 +75,8 @@ TEST_CASE("Test per-vertex normals function") {
 		const RowMatrixX3i faces{
 			{0, 1, 2}, {0, 2, 3}, {0, 3, 4}, {0, 4, 5}, {0, 5, 1}};
 
-		SUBCASE("Same numeric types") {
+		SUBCASE("Same numeric types")
+		{
 			RowMatrixX3d vertex_normals;
 			mesh::per_vertex_normals(vertices, faces, vertex_normals);
 			CHECK(vertex_normals.rows() == vertices.rows());
@@ -86,7 +90,8 @@ TEST_CASE("Test per-vertex normals function") {
 			          .isNaN()
 			          .all());
 		}
-		SUBCASE("Different numeric types") {
+		SUBCASE("Different numeric types")
+		{
 			RowMatrixX3f vertex_normals;
 			mesh::per_vertex_normals(vertices, faces, vertex_normals);
 			CHECK(vertex_normals.rows() == vertices.rows());
@@ -101,7 +106,8 @@ TEST_CASE("Test per-vertex normals function") {
 			          .all());
 		}
 	}
-	SUBCASE("Partial icosahedron - Fixed size, column-major matrices") {
+	SUBCASE("Partial icosahedron - Fixed size, column-major matrices")
+	{
 		Eigen::Matrix<double, 12, 3> vertices;
 		vertices.setZero();
 		vertices.col(0) = Eigen::sin(phi) * Eigen::cos(theta);
@@ -124,7 +130,8 @@ TEST_CASE("Test per-vertex normals function") {
 		          .isNaN()
 		          .all());
 	}
-	SUBCASE("Empty face array") {
+	SUBCASE("Empty face array")
+	{
 		RowMatrixX3d vertices = RowMatrixX3d::Zero(12, 3);
 		vertices.col(0) = Eigen::sin(phi) * Eigen::cos(theta);
 		vertices.col(1) = Eigen::sin(phi) * Eigen::sin(theta);
@@ -135,7 +142,8 @@ TEST_CASE("Test per-vertex normals function") {
 		mesh::per_vertex_normals(vertices, faces, vertex_normals);
 		CHECK(vertex_normals.size() == vertices.size());
 	}
-	SUBCASE("Empty vertex array") {
+	SUBCASE("Empty vertex array")
+	{
 		const RowMatrixX3d vertices(0, 3);
 		const RowMatrixX3i faces{
 			{0, 1, 2}, {0, 2, 3}, {0, 3, 4}, {0, 4, 5}, {0, 5, 1}};

@@ -35,8 +35,10 @@ using RowMatrixX3i = Eigen::Matrix<int, Eigen::Dynamic, 3, Eigen::RowMajor>;
 using RowMatrixX3f = Eigen::Matrix<float, Eigen::Dynamic, 3, Eigen::RowMajor>;
 
 namespace modcam {
-TEST_CASE("Test principal curvature function") {
-	SUBCASE("Sphere") {
+TEST_CASE("Test principal curvature function")
+{
+	SUBCASE("Sphere")
+	{
 		auto fs = cmrc::modcam::get_filesystem();
 		auto sphere_path = "data/mesh/sphere.stl"s;
 		REQUIRE(fs.is_file(sphere_path));
@@ -85,7 +87,8 @@ TEST_CASE("Test principal curvature function") {
 		CHECK(((pv1.array() - 1.0 / radius).abs() < tolerance).all());
 		CHECK(((pv2.array() - 1.0 / radius).abs() < tolerance).all());
 	}
-	SUBCASE("Empty face array") {
+	SUBCASE("Empty face array")
+	{
 		const RowMatrixX3d vertices{
 			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 0.0, 0.0}};
 		const Eigen::MatrixX3i faces(0, 3);
@@ -99,7 +102,8 @@ TEST_CASE("Test principal curvature function") {
 		CHECK(pd1.array().isNaN().all());
 		CHECK(pd2.array().isNaN().all());
 	}
-	SUBCASE("Empty vertex array") {
+	SUBCASE("Empty vertex array")
+	{
 		const RowMatrixX3d vertices(0, 3);
 		const RowMatrixX3i faces{{0, 1, 2}};
 		RowMatrixX3d pd1;
@@ -112,7 +116,8 @@ TEST_CASE("Test principal curvature function") {
 		CHECK(pd1.size() == 0);
 		CHECK(pd2.size() == 0);
 	}
-	SUBCASE("Icosahedron") {
+	SUBCASE("Icosahedron")
+	{
 		constexpr auto pi = std::numbers::pi;
 		const auto r = 1.0 / (2.0 * std::sin(pi / 5.0));
 		using Array12d = Eigen::Array<double, 12, 1>;
@@ -125,7 +130,8 @@ TEST_CASE("Test principal curvature function") {
 		theta(Eigen::seq(1, 5)) = Array5d::LinSpaced(5, 0.0, 8.0 * pi / 5.0);
 		theta(Eigen::seq(6, 10)) =
 			Array5d::LinSpaced(5, pi / 5.0, 9.0 * pi / 5.0);
-		SUBCASE("Dynamic size, row-major matrix") {
+		SUBCASE("Dynamic size, row-major matrix")
+		{
 			RowMatrixX3d vertices = RowMatrixX3d::Zero(12, 3);
 			vertices.col(0) = Eigen::sin(phi) * Eigen::cos(theta);
 			vertices.col(1) = Eigen::sin(phi) * Eigen::sin(theta);
@@ -196,7 +202,8 @@ TEST_CASE("Test principal curvature function") {
 		}
 #endif
 	}
-	SUBCASE("Cylinder") {
+	SUBCASE("Cylinder")
+	{
 		const double radius = 0.5;
 		const double x0 = radius;
 		const double x1 = radius * std::cos(1.0 * 2.0 * std::numbers::pi / 6.0);
