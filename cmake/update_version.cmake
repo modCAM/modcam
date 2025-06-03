@@ -15,7 +15,7 @@
 file(
     STRINGS VERSION MODCAM_VERSION
     LIMIT_COUNT 1
-    REGEX "[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9](\\.([0-9]+))?"
+    REGEX "^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9](\\.([0-9]+))?$"
 )
 if(NOT MODCAM_VERSION)
 	message(FATAL_ERROR "Something is wrong with the VERSION file! It should have the format YYYYMMDD[.minor]")
