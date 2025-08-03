@@ -47,9 +47,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check git lfs
-        run: git lfs --version
-
       - name: Set up cache
         uses: actions/github-script@v7
         with:
@@ -68,7 +65,9 @@ jobs:
         run: cmake --build build --config Release
 
       - name: Test
-        run: ctest --test-dir build --build-config Release
+        run: |
+          ctest --test-dir build --build-config Release
+          ctest --test-dir build --build-config Release --rerun-failed --output-on-failure
 
       - name: Package
         id: package
