@@ -65,9 +65,12 @@ jobs:
         run: cmake --build build --config Release
 
       - name: Test
-        run: |
-          ctest --test-dir build --build-config Release
-          ctest --test-dir build --build-config Release --rerun-failed --output-on-failure
+        id: ctest
+        run: ctest --test-dir build --build-config Release
+
+      - name: Check failed tests
+        if: ${{ failure() && steps.ctest.conclusion == 'failure' }}
+        run: ctest --test-dir build --build-config Release --rerun-failed --output-on-failure
 
       - name: Package
         id: package
