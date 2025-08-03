@@ -33,28 +33,13 @@ env:
   VCPKG_ROOT: "./vcpkg"
   VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
   VERSION_FILE: VERSION
+  CPP_COMPILER: "g++"
 
 jobs:
   build-and-test:
-    name: Build and test on ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - {
-              name: "Windows MSVC",
-              os: windows-latest,
-              build_type: "Release",
-              cpp_compiler: "cl",
-            }
-          - {
-              name: "Ubuntu GCC",
-              os: ubuntu-latest,
-              build_type: "Release",
-              cpp_compiler: "g++",
-            }
+    name: Build and test
+    runs-on: ubuntu-latest
+    container: ghcr.io/modcam/devcontainer:latest
 
     steps:
       - name: Checkout
@@ -67,37 +52,31 @@ jobs:
             core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-      - name: Install vcpkg
-        shell: bash
-        run: |
-          git clone http://github.com/Microsoft/vcpkg
-          ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
-
       - name: Configure
         run: >
           cmake -S .
-          -DCMAKE_CXX_COMPILER=${{ matrix.config.cpp_compiler }}
-          -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
+          -DCMAKE_CXX_COMPILER=${{ env.CPP_COMPILER }}
+          -DCMAKE_BUILD_TYPE=Release
           --preset "build-tests"
 
       - name: Build
-        run: cmake --build build --config ${{ matrix.config.build_type }}
+        run: cmake --build build --config Release
 
       - name: Test
-        run: ctest --test-dir build --build-config ${{ matrix.config.build_type }}
+        run: ctest --test-dir build --build-config Release
 
       - name: Package
         id: package
         if: github.ref_name == github.event.repository.default_branch
         run: |
           cd build/
-          cpack -C ${{ matrix.build_type }} -B ./package-artifacts
+          cpack -C Release -B ./package-artifacts
 
       - name: Upload package artifacts
         if: steps.package.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: package-${{ matrix.config.os }}-${{ matrix.config.cpp_compiler }}-${{ matrix.config.build_type }}
+          name: cmake-packages
           path: build/package-artifacts/*.*
           retention-days: 5
 
@@ -105,20 +84,16 @@ jobs:
   build-docs:
     name: Build docs
     runs-on: ubuntu-latest
+    container: ghcr.io/modcam/devcontainer:latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Doxygen
-        run: sudo apt-get install -y doxygen
-
       - name: Build docs
         run: |
           cmake -S . --preset "build-docs-only"
           cmake --build build --config Release
-
-      # Do I need to include these docs in the release?
 
   create-release:
     name: Create release
@@ -135,6 +110,7 @@ jobs:
       - name: Download package artifacts
         uses: actions/download-artifact@v4
         with:
+          name: cmake-packages
           path: package-artifacts
           merge-multiple: true
 
