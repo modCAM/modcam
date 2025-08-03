@@ -39,9 +39,7 @@ jobs:
   build-and-test:
     name: Build and test
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/modcam/devcontainer:latest
-      options: --user root
+    container: ghcr.io/modcam/devcontainer:latest
 
     steps:
       - name: Checkout
@@ -53,9 +51,6 @@ jobs:
           script: |
             core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-
-      - name: Debug vcpkg
-        run: echo $VCPKG_ROOT
 
       - name: Configure
         run: >
@@ -89,9 +84,7 @@ jobs:
   build-docs:
     name: Build docs
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/modcam/devcontainer:latest
-      options: --user root
+    container: ghcr.io/modcam/devcontainer:latest
 
     steps:
       - name: Checkout
@@ -99,6 +92,7 @@ jobs:
 
       - name: Build docs
         run: |
+          source /root/.venv/bin/activate
           cmake -S . --preset "build-docs-only"
           cmake --build build --config Release
 
