@@ -62,7 +62,9 @@ jobs:
           --preset "build-tests"
 
       - name: Build
-        run: cmake --build build --config Release
+        run: |
+          cmake --build build --config Release
+          ls -l build/data/modcam-data-src/mesh/sphere.stl
 
       - name: Test
         id: ctest
