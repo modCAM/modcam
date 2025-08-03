@@ -86,7 +86,9 @@ jobs:
   build-docs:
     name: Build docs
     runs-on: ubuntu-latest
-    container: ghcr.io/modcam/devcontainer:latest
+    container:
+      image: ghcr.io/modcam/devcontainer:latest
+      options: --user root
 
     steps:
       - name: Checkout
