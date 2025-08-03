@@ -86,6 +86,9 @@ jobs:
   build-docs:
     name: Build docs
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     container: ghcr.io/modcam/devcontainer:latest
 
     steps:
