@@ -55,16 +55,14 @@ jobs:
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
       - name: Configure
-        run: >
-          cmake -S .
-          -DCMAKE_CXX_COMPILER=${{ env.CPP_COMPILER }}
-          -DCMAKE_BUILD_TYPE=Release
-          --preset "build-tests"
+        run: |
+          git lfs --version
+          git lfs install
+          cmake -S . -DCMAKE_CXX_COMPILER=${{ env.CPP_COMPILER }} -DCMAKE_BUILD_TYPE=Release --preset "build-tests" --log-level TRACE
+          ls -l build/data/modcam-data-src/mesh/sphere.stl
 
       - name: Build
-        run: |
-          cmake --build build --config Release
-          ls -l build/data/modcam-data-src/mesh/sphere.stl
+        run: cmake --build build --config Release
 
       - name: Test
         id: ctest
