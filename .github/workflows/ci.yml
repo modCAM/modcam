@@ -30,7 +30,6 @@ on:
       - "!VERSION"
 
 env:
-  VCPKG_ROOT: "./vcpkg"
   VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
   VERSION_FILE: VERSION
   CPP_COMPILER: "g++"
