@@ -47,6 +47,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check git lfs
+        run: git lfs --version
+
       - name: Set up cache
         uses: actions/github-script@v7
         with:
