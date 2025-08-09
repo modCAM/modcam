@@ -15,31 +15,32 @@
 file(
     STRINGS VERSION MODCAM_VERSION
     LIMIT_COUNT 1
-    REGEX "^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9](\\.([0-9]+))?$"
+    REGEX "^[0-9][0-9][0-9][0-9]\\.[0-9][0-9]\\.[0-9][0-9](\\.([0-9]+))?$"
 )
 if(NOT MODCAM_VERSION)
-	message(FATAL_ERROR "Something is wrong with the VERSION file! It should have the format YYYYMMDD[.minor]")
+	message(FATAL_ERROR "Something is wrong with the VERSION file! It should have the format YYYY.MM.DD[.tweak]")
 endif()
 
-# Separate major (UTC year-month-day) and minor parts of the version
+# Separate major (UTC year), minor (UTC month), patch (UTC day), and (optionally) tweak parts of the version
 string(REPLACE "." ";" MODCAM_VERSION ${MODCAM_VERSION})
 list(LENGTH MODCAM_VERSION VERSION_LENGTH)
-list(GET MODCAM_VERSION 0 VERSION_MAJOR)
-if(VERSION_LENGTH GREATER 1)
-	list(GET MODCAM_VERSION 1 VERSION_MINOR)
+list(GET MODCAM_VERSION 0 VERSION_YEAR)
+list(GET MODCAM_VERSION 1 VERSION_MONTH)
+list(GET MODCAM_VERSION 2 VERSION_DAY)
+if(VERSION_LENGTH GREATER 3)
+	list(GET MODCAM_VERSION 3 VERSION_SAME_DAY)
 endif()
 
-string(TIMESTAMP UTC_DATE %Y%m%d UTC)
+string(TIMESTAMP UTC_DATE %Y.%m.%d UTC)
 
 # Update the version
-if(${VERSION_MAJOR} VERSION_EQUAL ${UTC_DATE})
-	if(NOT VERSION_MINOR)
-		set(VERSION_MINOR 0)
+set(MODCAM_VERSION ${UTC_DATE})
+if("${VERSION_YEAR}.${VERSION_MONTH}.${VERSION_DAY}" VERSION_EQUAL ${UTC_DATE})
+	if(NOT VERSION_SAME_DAY)
+		set(VERSION_SAME_DAY 0)
 	endif()
-	MATH(EXPR VERSION_MINOR "${VERSION_MINOR}+1")
-	set(MODCAM_VERSION ${UTC_DATE}.${VERSION_MINOR})
-else()
-	set(MODCAM_VERSION ${UTC_DATE})
+	MATH(EXPR VERSION_SAME_DAY "${VERSION_SAME_DAY}+1")
+	string(APPEND MODCAM_VERSION ".${VERSION_SAME_DAY}")
 endif()
 
 file(WRITE VERSION ${MODCAM_VERSION})
