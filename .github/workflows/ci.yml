@@ -1,7 +1,7 @@
 # The test workflow should run whenever changes are pushed to a pull request
 # branch or to 'main'. For any changes pushed to 'main', this workflow should
 # only run after a version update. This workflow should
-# - set up the build environment (use a container?),
+# - set up the build environment,
 # - checkout the code,
 # - build the code,
 # - run linting checks, and
@@ -133,4 +133,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           version="$(< ${{ env.VERSION_FILE }})"
-          gh release create $version ./package-artifacts/*.tar.gz ./package-artifacts/*.zip
+          gh release create $version ./package-artifacts/*.tar.gz ./package-artifacts/*.zip CHANGELOG.md

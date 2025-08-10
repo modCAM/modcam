@@ -70,7 +70,9 @@ jobs:
 
       - name: Update version
         if: env.version_changed == 'false'
-        run: cmake -P ./cmake/update_version.cmake
+        run: |
+          cmake -P ./cmake/update_version.cmake
+          python ./scripts/changelog.py
 
       - name: Commit new version
         if: env.version_changed == 'false'
@@ -79,7 +81,7 @@ jobs:
           git config user.email '199305358+modcam-version-update[bot]@users.noreply.github.com'
           version="$(< $VERSION_FILE)"
           echo "New version: $version"
-          git add $VERSION_FILE
+          git add $VERSION_FILE CHANGELOG.md
           git commit --amend --no-edit
           git tag -a $version -m "$version"
           git push origin main --follow-tags --force
