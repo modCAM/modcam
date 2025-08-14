@@ -32,15 +32,22 @@
 namespace modcam::mesh {
 
 /**
- * Compute the (vertex) principal curvature using the algorithm described in
- * @cite Rusinkiewicz2004.
+ * Compute the (per-vertex) principal curvature on a triangle mesh using the
+ * algorithm described in @cite Rusinkiewicz2004.
+ *
+ * While many principal curvature algorithms use a tunable "neighborhood" to
+ * compute their estimates, this algorithm uses only 1-ring vertex
+ * neighborhoods. Although the @cite Rusinkiewicz2004 algorithm can be used to
+ * compute curvature derivates, that is not done here.
  *
  * @param[out] pd1 V-by-3 maximal curvature direction for each vertex.
  * @param[out] pd2 V-by-3 minimal curvature direction for each vertex.
  * @param[out] pv1 V-by-1 maximal curvature value for each vertex.
  * @param[out] pv2 V-by-1 minimal curvature value for each vertex.
- * @param[in] vertices V-by-3 matrix of mesh vertex coordinates
- * @param[in] faces F-by-3 matrix of face (triangle) indices
+ * @param[in] vertices V-by-3 matrix of mesh vertex Cartesian coordinates
+ * @param[in] faces F-by-3 matrix of face (triangle) indices. Each row
+ * represents a triangle by indexing three vertices (rows) from the \p vertices
+ * array.
  */
 template <Vertices3D DerivedV, TriangleFaces DerivedF, Vectors3D DerivedPD,
           typename DerivedPV>

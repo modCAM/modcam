@@ -33,10 +33,18 @@ namespace modcam::mesh {
  * Compute the Voronoi cell areas for the triangles in a mesh as described in
  * @cite Meyer2003.
  *
+ * For a non-obtuse triangle, the Voronoi areas are bounded by segments
+ * connecting the triangle's circumcenter to the midpoints of its edges. In the
+ * case of an obtuse triangle, we replace the triangle circumcenter with the
+ * midpoint of the edge opposite the obtuse angle.
+ *
  * @param[out] v_area F-by-3 matrix of the Voronoi area of each vertex in each
- * triangle
- * @param[in] vertices V-by-3 matrix of mesh vertex coordinates
- * @param[in] faces F-by-3 matrix of face (triangle) indices
+ * triangle. Each value in this array corresponds to a triangle corner in the
+ * \p faces array.
+ * @param[in] vertices V-by-3 matrix of mesh vertex Cartesian coordinates
+ * @param[in] faces F-by-3 matrix of face (triangle) indices. Each row
+ * represents a triangle by indexing three vertices (rows) from the \p vertices
+ * array.
  */
 template <Vertices3D DerivedV, TriangleFaces DerivedF, typename DerivedVA>
 requires std::floating_point<typename DerivedVA::Scalar> &&
