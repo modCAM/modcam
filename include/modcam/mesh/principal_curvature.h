@@ -37,8 +37,8 @@ namespace modcam::mesh {
  *
  * While many principal curvature algorithms use a tunable "neighborhood" to
  * compute their estimates, this algorithm uses only 1-ring vertex
- * neighborhoods. Although the @cite Rusinkiewicz2004 algorithm can be used to
- * compute curvature derivates, that is not done here.
+ * neighborhoods. Although the algorithm in @cite Rusinkiewicz2004 can be used
+ * to compute curvature derivates, that is not done here.
  *
  * @param[out] pd1 V-by-3 maximal curvature direction for each vertex.
  * @param[out] pd2 V-by-3 minimal curvature direction for each vertex.
