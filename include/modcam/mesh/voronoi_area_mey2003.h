@@ -10,8 +10,8 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-#ifndef VORONOI_AREA_H
-#define VORONOI_AREA_H
+#ifndef VORONOI_AREA_MEY2003_H
+#define VORONOI_AREA_MEY2003_H
 
 #include "modcam/mesh/concepts.h"
 #include "modcam/utility/modulus.h"
@@ -50,9 +50,9 @@ template <Vertices3D DerivedV, TriangleFaces DerivedF, typename DerivedVA>
 requires std::floating_point<typename DerivedVA::Scalar> &&
          (DerivedVA::ColsAtCompileTime == 3 ||
           DerivedVA::ColsAtCompileTime == Eigen::Dynamic)
-void voronoi_area(Eigen::PlainObjectBase<DerivedVA> &v_area,
-                  const Eigen::MatrixBase<DerivedV> &vertices,
-                  const Eigen::MatrixBase<DerivedF> &faces)
+void voronoi_area_mey2003(Eigen::PlainObjectBase<DerivedVA> &v_area,
+                          const Eigen::MatrixBase<DerivedV> &vertices,
+                          const Eigen::MatrixBase<DerivedF> &faces)
 {
 	assert(vertices.cols() == 2 ||
 	       vertices.cols() == 3 && "vertices must have 3 columns");

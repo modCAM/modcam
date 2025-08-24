@@ -10,20 +10,19 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-#ifndef PRINCIPAL_CURVATURE_H
-#define PRINCIPAL_CURVATURE_H
+#ifndef PRINCIPAL_CURVATURE_RUS2004_H
+#define PRINCIPAL_CURVATURE_RUS2004_H
 
 #include "modcam/mesh/concepts.h"
-#include "modcam/mesh/per_vertex_basis.h"
-#include "modcam/mesh/per_vertex_normals.h"
-#include "modcam/mesh/voronoi_area.h"
+#include "modcam/mesh/per_vertex_basis_pro2024.h"
+#include "modcam/mesh/per_vertex_normals_max1999.h"
+#include "modcam/mesh/voronoi_area_mey2003.h"
 
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
 #include <Eigen/Geometry>
 #include <Eigen/QR>
 #include <igl/local_basis.h>
-#include <igl/principal_curvature.h>
 
 #include <cassert>
 #include <cmath>
@@ -122,7 +121,7 @@ void principal_curvature_rus2004(Eigen::PlainObjectBase<DerivedPD> &pd1,
 	                  Eigen::RowMajor>;
 
 	RowMatrixV3 vertex_normals;
-	mesh::per_vertex_normals(vertex_normals, vertices, faces);
+	mesh::per_vertex_normals_max1999(vertex_normals, vertices, faces);
 
 	RowMatrixF3 normal0{vertex_normals(faces.col(0).array(), Eigen::all)};
 	RowMatrixF3 normal1{vertex_normals(faces.col(1).array(), Eigen::all)};
@@ -153,12 +152,12 @@ void principal_curvature_rus2004(Eigen::PlainObjectBase<DerivedPD> &pd1,
 	RowMatrixV3 vertex_basis0;
 	RowMatrixV3 vertex_basis1;
 	RowMatrixV3 vertex_basis2;
-	mesh::per_vertex_basis(vertex_basis0, vertex_basis1, vertex_basis2,
-	                       vertex_normals);
+	mesh::per_vertex_basis_pro2024(vertex_basis0, vertex_basis1, vertex_basis2,
+	                               vertex_normals);
 
 	// Compute the second fundamental form in the vertex basis frame.
 	RowMatrixF3 weights;
-	mesh::voronoi_area(weights, vertices, faces);
+	mesh::voronoi_area_mey2003(weights, vertices, faces);
 	auto num_vertices = vertices.rows();
 	Eigen::Array<typename DerivedV::Scalar, DerivedV::RowsAtCompileTime, 1>
 		sum_weights{

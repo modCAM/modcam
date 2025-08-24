@@ -10,7 +10,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-#include "modcam/mesh/per_vertex_basis.h"
+#include "modcam/mesh/per_vertex_basis_pro2024.h"
 
 #include <doctest/doctest.h>
 
@@ -39,7 +39,7 @@ TEST_CASE("Test per-vertex basis function")
 			RowMatrixX3d b0;
 			RowMatrixX3d b1;
 			RowMatrixX3d b2;
-			mesh::per_vertex_basis(b0, b1, b2, normal_vectors);
+			mesh::per_vertex_basis_pro2024(b0, b1, b2, normal_vectors);
 			CHECK((b2.array() == normal_vectors.rowwise().normalized().array())
 			          .all());
 			for (Eigen::Index r = 0; r < b2.rows(); r++) {
@@ -54,7 +54,7 @@ TEST_CASE("Test per-vertex basis function")
 			RowMatrixX3f b0;
 			RowMatrixX3f b1;
 			RowMatrixX3f b2;
-			mesh::per_vertex_basis(b0, b1, b2, normal_vectors);
+			mesh::per_vertex_basis_pro2024(b0, b1, b2, normal_vectors);
 			CHECK((b2.array() ==
 			       normal_vectors.rowwise().normalized().array().cast<float>())
 			          .all());
@@ -72,7 +72,7 @@ TEST_CASE("Test per-vertex basis function")
 		Eigen::RowVector3d b0;
 		Eigen::RowVector3d b1;
 		Eigen::RowVector3d b2;
-		mesh::per_vertex_basis(b0, b1, b2, normal_vector);
+		mesh::per_vertex_basis_pro2024(b0, b1, b2, normal_vector);
 		CHECK((b2.array() == normal_vector.normalized().array()).all());
 		Eigen::RowVector3d b0_x_b1 = b0.cross(b1);
 		for (Eigen::Index i = 0; i < b0_x_b1.size(); i++) {
@@ -90,7 +90,7 @@ TEST_CASE("Test per-vertex basis function")
 		Eigen::Matrix<double, 3, 3> b0;
 		Eigen::Matrix<double, 3, 3> b1;
 		Eigen::Matrix<double, 3, 3> b2;
-		mesh::per_vertex_basis(b0, b1, b2, normal_vectors);
+		mesh::per_vertex_basis_pro2024(b0, b1, b2, normal_vectors);
 		CHECK((b2.array() == normal_vectors.rowwise().normalized().array())
 		          .all());
 		for (Eigen::Index r = 0; r < b2.rows(); r++) {

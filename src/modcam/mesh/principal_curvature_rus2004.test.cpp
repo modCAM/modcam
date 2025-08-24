@@ -10,7 +10,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-#include "modcam/mesh/principal_curvature.h"
+#include "modcam/mesh/principal_curvature_rus2004.h"
 
 #include <cmrc/cmrc.hpp>
 

@@ -10,8 +10,8 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-#ifndef PER_VERTEX_BASIS_H
-#define PER_VERTEX_BASIS_H
+#ifndef PER_VERTEX_BASIS_PRO2024_H
+#define PER_VERTEX_BASIS_PRO2024_H
 
 #include "modcam/mesh/concepts.h"
 #include "modcam/utility/random_orthonormal.h"
@@ -23,6 +23,8 @@ namespace modcam::mesh {
 
 /**
  * Compute an orthonormal set of basis vectors for each vertex in a mesh.
+ * Algorithm developed 2024 by <a
+ * href="https://github.com/prosilio">prosilio</a>
  *
  * Each vertex in the mesh is assigned a local coordinate system, where the
  * z-axis is aligned with the vertex normal.
@@ -36,10 +38,10 @@ namespace modcam::mesh {
  * @param[in] vertex_normals V-by-3 matrix of mesh vertex 3D normals
  */
 template <Vectors3D DerivedN, Vectors3D DerivedB>
-void per_vertex_basis(Eigen::PlainObjectBase<DerivedB> &b0,
-                      Eigen::PlainObjectBase<DerivedB> &b1,
-                      Eigen::PlainObjectBase<DerivedB> &b2,
-                      const Eigen::MatrixBase<DerivedN> &vertex_normals)
+void per_vertex_basis_pro2024(Eigen::PlainObjectBase<DerivedB> &b0,
+                              Eigen::PlainObjectBase<DerivedB> &b1,
+                              Eigen::PlainObjectBase<DerivedB> &b2,
+                              const Eigen::MatrixBase<DerivedN> &vertex_normals)
 {
 	assert(vertex_normals.cols() == 3 && "vertex_normals must have 3 columns");
 

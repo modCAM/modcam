@@ -20,22 +20,22 @@ Concepts
 Functions
 =========
 
-per_vertex_basis
-----------------
+per_vertex_basis_pro2024
+------------------------
 
-.. doxygenfunction:: modcam::mesh::per_vertex_basis
+.. doxygenfunction:: modcam::mesh::per_vertex_basis_pro2024
 
-per_vertex_normals
-------------------
+per_vertex_normals_max1999
+--------------------------
 
-.. doxygenfunction:: modcam::mesh::per_vertex_normals
+.. doxygenfunction:: modcam::mesh::per_vertex_normals_max1999
 
 principal_curvature_rus2004
 ---------------------------
 
 .. doxygenfunction:: modcam::mesh::principal_curvature_rus2004
 
-voronoi_area
-------------
+voronoi_area_mey2003
+--------------------
 
-.. doxygenfunction:: modcam::mesh::voronoi_area
+.. doxygenfunction:: modcam::mesh::voronoi_area_mey2003

@@ -10,7 +10,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-#include "modcam/mesh/per_vertex_normals.h"
+#include "modcam/mesh/per_vertex_normals_max1999.h"
 
 #include <doctest/doctest.h>
 
@@ -54,7 +54,7 @@ TEST_CASE("Test per-vertex normals function")
 			{6, 7, 2},  {7, 8, 3},  {8, 9, 4},  {9, 10, 5},  {10, 6, 1},
 			{11, 7, 6}, {11, 8, 7}, {11, 9, 8}, {11, 10, 9}, {11, 6, 10}};
 		RowMatrixX3d vertex_normals;
-		mesh::per_vertex_normals(vertex_normals, vertices, faces);
+		mesh::per_vertex_normals_max1999(vertex_normals, vertices, faces);
 		CHECK(vertex_normals.rows() == vertices.rows());
 		CHECK(vertex_normals.cols() == vertices.cols());
 		for (Eigen::Index i = 0; i < vertices.rows(); ++i) {
@@ -78,7 +78,7 @@ TEST_CASE("Test per-vertex normals function")
 		SUBCASE("Same numeric types")
 		{
 			RowMatrixX3d vertex_normals;
-			mesh::per_vertex_normals(vertex_normals, vertices, faces);
+			mesh::per_vertex_normals_max1999(vertex_normals, vertices, faces);
 			CHECK(vertex_normals.rows() == vertices.rows());
 			CHECK(vertex_normals.cols() == vertices.cols());
 			CHECK_FALSE(vertex_normals(Eigen::seq(0, 5), Eigen::all)
@@ -93,7 +93,7 @@ TEST_CASE("Test per-vertex normals function")
 		SUBCASE("Different numeric types")
 		{
 			RowMatrixX3f vertex_normals;
-			mesh::per_vertex_normals(vertex_normals, vertices, faces);
+			mesh::per_vertex_normals_max1999(vertex_normals, vertices, faces);
 			CHECK(vertex_normals.rows() == vertices.rows());
 			CHECK(vertex_normals.cols() == vertices.cols());
 			CHECK_FALSE(vertex_normals(Eigen::seq(0, 5), Eigen::all)
@@ -120,7 +120,7 @@ TEST_CASE("Test per-vertex normals function")
 			{0, 1, 2}, {0, 2, 3}, {0, 3, 4}, {0, 4, 5}, {0, 5, 1}};
 		Eigen::Matrix<double, 12, 3> vertex_normals;
 		vertex_normals.setZero();
-		mesh::per_vertex_normals(vertex_normals, vertices, faces);
+		mesh::per_vertex_normals_max1999(vertex_normals, vertices, faces);
 		CHECK(vertex_normals.rows() == vertices.rows());
 		CHECK(vertex_normals.cols() == vertices.cols());
 		CHECK_FALSE(
@@ -139,7 +139,7 @@ TEST_CASE("Test per-vertex normals function")
 		vertices.rowwise().normalize(); // Set radius to 1.0
 		const RowMatrixX3i faces(0, 3);
 		RowMatrixX3d vertex_normals;
-		mesh::per_vertex_normals(vertex_normals, vertices, faces);
+		mesh::per_vertex_normals_max1999(vertex_normals, vertices, faces);
 		CHECK(vertex_normals.size() == vertices.size());
 	}
 	SUBCASE("Empty vertex array")
@@ -148,7 +148,7 @@ TEST_CASE("Test per-vertex normals function")
 		const RowMatrixX3i faces{
 			{0, 1, 2}, {0, 2, 3}, {0, 3, 4}, {0, 4, 5}, {0, 5, 1}};
 		RowMatrixX3d vertex_normals;
-		mesh::per_vertex_normals(vertex_normals, vertices, faces);
+		mesh::per_vertex_normals_max1999(vertex_normals, vertices, faces);
 		CHECK(vertex_normals.size() == 0);
 	}
 }

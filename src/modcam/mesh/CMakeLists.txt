@@ -27,10 +27,10 @@ target_sources(
 		BASE_DIRS "${modCAM_SOURCE_DIR}/include"
 		FILES
 			"${modCAM_SOURCE_DIR}/include/modcam/mesh/concepts.h"
-			"${modCAM_SOURCE_DIR}/include/modcam/mesh/per_vertex_basis.h"
-			"${modCAM_SOURCE_DIR}/include/modcam/mesh/per_vertex_normals.h"
-			"${modCAM_SOURCE_DIR}/include/modcam/mesh/principal_curvature.h"
-			"${modCAM_SOURCE_DIR}/include/modcam/mesh/voronoi_area.h"
+			"${modCAM_SOURCE_DIR}/include/modcam/mesh/per_vertex_basis_pro2024.h"
+			"${modCAM_SOURCE_DIR}/include/modcam/mesh/per_vertex_normals_max1999.h"
+			"${modCAM_SOURCE_DIR}/include/modcam/mesh/principal_curvature_rus2004.h"
+			"${modCAM_SOURCE_DIR}/include/modcam/mesh/voronoi_area_mey2003.h"
 )
 
 install(
@@ -44,10 +44,10 @@ install(
 if(MODCAM_ENABLE_TESTING)
 	target_sources(
 		test_modcam PRIVATE
-			per_vertex_basis.test.cpp
-			per_vertex_normals.test.cpp
-			principal_curvature.test.cpp
-			voronoi_area.test.cpp
+			per_vertex_basis_pro2024.test.cpp
+			per_vertex_normals_max1999.test.cpp
+			principal_curvature_rus2004.test.cpp
+			voronoi_area_mey2003.test.cpp
 	)
 	target_link_libraries(
 		test_modcam PRIVATE

@@ -10,8 +10,8 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-#ifndef PER_VERTEX_NORMALS_H
-#define PER_VERTEX_NORMALS_H
+#ifndef PER_VERTEX_NORMALS_MAX1999_H
+#define PER_VERTEX_NORMALS_MAX1999_H
 
 #include "modcam/mesh/concepts.h"
 #include "modcam/utility/modulus.h"
@@ -39,9 +39,9 @@ namespace modcam::mesh {
  * array.
  */
 template <Vertices3D DerivedV, TriangleFaces DerivedF, Vectors3D DerivedN>
-void per_vertex_normals(Eigen::PlainObjectBase<DerivedN> &normals,
-                        const Eigen::MatrixBase<DerivedV> &vertices,
-                        const Eigen::MatrixBase<DerivedF> &faces)
+void per_vertex_normals_max1999(Eigen::PlainObjectBase<DerivedN> &normals,
+                                const Eigen::MatrixBase<DerivedV> &vertices,
+                                const Eigen::MatrixBase<DerivedF> &faces)
 {
 	assert(vertices.cols() == 3 && "vertices must have 3 columns");
 	assert(faces.cols() == 3 && "faces must have 3 columns");
