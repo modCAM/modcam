@@ -10,8 +10,8 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-#ifndef RANDOM_ORTHONORMAL_H
-#define RANDOM_ORTHONORMAL_H
+#ifndef MODCAM_UTILITY_RANDOM_ORTHONORMAL_H
+#define MODCAM_UTILITY_RANDOM_ORTHONORMAL_H
 
 #include "modcam/utility/concepts.h"
 

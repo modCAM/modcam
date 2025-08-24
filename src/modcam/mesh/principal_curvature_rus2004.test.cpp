@@ -22,8 +22,9 @@
 #include <igl/remove_duplicate_vertices.h>
 
 #include <cmath>
+#include <ios>
 #include <numbers>
-#include <string>
+#include <string> // NOLINT(misc-include-cleaner)
 #include <strstream>
 
 using namespace std::string_literals;
@@ -40,13 +41,13 @@ TEST_CASE("Test principal curvature function")
 	SUBCASE("Sphere")
 	{
 		auto fs = cmrc::modcam::get_filesystem();
-		auto sphere_path = "data/mesh/sphere.stl"s;
+		auto sphere_path =
+			"data/mesh/sphere.stl"s; // NOLINT(misc-include-cleaner)
 		REQUIRE(fs.is_file(sphere_path));
 		auto sphere_rc = fs.open(sphere_path);
+		// TODO: Change this to spanstream when I switch to C++23.
 		std::istrstream sphere_stl(
-			sphere_rc.begin(),
-			sphere_rc.size()); // TODO: Change this to spanstream when I switch
-		                       // to C++23.
+			sphere_rc.begin(), static_cast<std::streamsize>(sphere_rc.size()));
 		RowMatrixX3d tmp_vertices;
 		RowMatrixX3i tmp_faces;
 		RowMatrixX3d tmp_normals;

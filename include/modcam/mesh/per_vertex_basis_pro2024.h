@@ -10,8 +10,8 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-#ifndef PER_VERTEX_BASIS_PRO2024_H
-#define PER_VERTEX_BASIS_PRO2024_H
+#ifndef MODCAM_MESH_PER_VERTEX_BASIS_PRO2024_H
+#define MODCAM_MESH_PER_VERTEX_BASIS_PRO2024_H
 
 #include "modcam/mesh/concepts.h"
 #include "modcam/utility/random_orthonormal.h"

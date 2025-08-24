@@ -10,8 +10,8 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-#ifndef PER_VERTEX_NORMALS_MAX1999_H
-#define PER_VERTEX_NORMALS_MAX1999_H
+#ifndef MODCAM_MESH_PER_VERTEX_NORMALS_MAX1999_H
+#define MODCAM_MESH_PER_VERTEX_NORMALS_MAX1999_H
 
 #include "modcam/mesh/concepts.h"
 #include "modcam/utility/modulus.h"
@@ -70,10 +70,10 @@ void per_vertex_normals_max1999(Eigen::PlainObjectBase<DerivedN> &normals,
 		for (Eigen::Index col = 0; col < vertices_per_face; col++) {
 			auto i = utility::mod(col - 1, vertices_per_face);
 			auto j = utility::mod(col + 1, vertices_per_face);
-			RowVector3 edge_i = vertices.row(faces(row, j)).array() -
-			                    vertices.row(faces(row, col)).array();
-			RowVector3 edge_j = vertices.row(faces(row, i)).array() -
-			                    vertices.row(faces(row, col)).array();
+			const RowVector3 edge_i = vertices.row(faces(row, j)).array() -
+			                          vertices.row(faces(row, col)).array();
+			const RowVector3 edge_j = vertices.row(faces(row, i)).array() -
+			                          vertices.row(faces(row, col)).array();
 			normals.row(faces(row, col)) +=
 				(edge_i.cross(edge_j) /
 			     (edge_squared(row, i) * edge_squared(row, j)))

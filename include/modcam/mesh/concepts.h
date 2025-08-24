@@ -10,8 +10,8 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-#ifndef MESH_CONCEPTS_H
-#define MESH_CONCEPTS_H
+#ifndef MODCAM_MESH_CONCEPTS_H
+#define MODCAM_MESH_CONCEPTS_H
 
 #include <Eigen/Core>
 

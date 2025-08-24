@@ -7,6 +7,7 @@ Checks: >
     cppcoreguidelines-*,
     -cppcoreguidelines-avoid-magic-numbers,
     hicpp-*,
+    llvm-header-guard,
     misc-*,
     modernize-*,
     performance-*,
@@ -15,5 +16,5 @@ CheckOptions:
     - { key: misc-include-cleaner.IgnoreHeaders, value: "Eigen/.*" }
 
 WarningsAsErrors: ""
-HeaderFilterRegex: ""
+HeaderFilterRegex: "include/modcam/.*"
 FormatStyle: file

@@ -10,8 +10,8 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-#ifndef MODULUS_H
-#define MODULUS_H
+#ifndef MODCAM_UTILITY_MODULUS_H
+#define MODCAM_UTILITY_MODULUS_H
 
 #include <concepts>
 

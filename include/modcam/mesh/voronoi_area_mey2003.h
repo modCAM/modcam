@@ -10,8 +10,8 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-#ifndef VORONOI_AREA_MEY2003_H
-#define VORONOI_AREA_MEY2003_H
+#ifndef MODCAM_MESH_VORONOI_AREA_MEY2003_H
+#define MODCAM_MESH_VORONOI_AREA_MEY2003_H
 
 #include "modcam/mesh/concepts.h"
 #include "modcam/utility/modulus.h"
@@ -74,8 +74,7 @@ void voronoi_area_mey2003(Eigen::PlainObjectBase<DerivedVA> &v_area,
 
 	Eigen::ArrayX<typename DerivedVA::Scalar> area;
 	igl::doublearea(vertices, faces, area);
-	area /= static_cast<typename DerivedVA::Scalar>(
-		2.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers)
+	area /= static_cast<typename DerivedVA::Scalar>(2.0);
 
 	Eigen::ArrayXX<typename DerivedV::Scalar> angles;
 	igl::internal_angles(vertices, faces, angles);
@@ -87,32 +86,26 @@ void voronoi_area_mey2003(Eigen::PlainObjectBase<DerivedVA> &v_area,
 	igl::edge_lengths(vertices, faces, edge_squared);
 	edge_squared = edge_squared.cwiseProduct(edge_squared);
 
-	constexpr auto right_angle = static_cast<typename DerivedV::Scalar>(
-		std::numbers::pi /
-		2.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers)
+	constexpr auto right_angle =
+		static_cast<typename DerivedV::Scalar>(std::numbers::pi / 2.0);
 	Eigen::Array<bool, Eigen::Dynamic, 1> nonobtuse =
 		(angles <= right_angle).rowwise().all();
 
 	for (Eigen::Index row = 0; row < num_faces; row++) {
 		for (Eigen::Index col = 0; col < vertices_per_face; col++) {
 			if (nonobtuse(row)) {
-				Eigen::Index i = utility::mod(col - 1, vertices_per_face);
-				Eigen::Index j = utility::mod(col + 1, vertices_per_face);
+				const Eigen::Index i = utility::mod(col - 1, vertices_per_face);
+				const Eigen::Index j = utility::mod(col + 1, vertices_per_face);
 				v_area(row, col) =
-					0.25 * // NOLINT(cppcoreguidelines-avoid-magic-numbers)
-					(edge_squared(row, i) * half_cot(row, i) +
-				     edge_squared(row, j) * half_cot(row, j));
+					0.25 * (edge_squared(row, i) * half_cot(row, i) +
+				            edge_squared(row, j) * half_cot(row, j));
 			} else {
 				if (angles(row, col) > right_angle) {
 					v_area(row, col) =
-						area(row) /
-						static_cast<typename DerivedV::Scalar>(
-							2.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers)
+						area(row) / static_cast<typename DerivedV::Scalar>(2.0);
 				} else {
 					v_area(row, col) =
-						area(row) /
-						static_cast<typename DerivedV::Scalar>(
-							4.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers)
+						area(row) / static_cast<typename DerivedV::Scalar>(4.0);
 				}
 			}
 		}

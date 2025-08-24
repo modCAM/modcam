@@ -10,8 +10,8 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-#ifndef PRINCIPAL_CURVATURE_RUS2004_H
-#define PRINCIPAL_CURVATURE_RUS2004_H
+#ifndef MODCAM_MESH_PRINCIPAL_CURVATURE_RUS2004_H
+#define MODCAM_MESH_PRINCIPAL_CURVATURE_RUS2004_H
 
 #include "modcam/mesh/concepts.h"
 #include "modcam/mesh/per_vertex_basis_pro2024.h"
@@ -83,19 +83,19 @@ void principal_curvature_rus2004(Eigen::PlainObjectBase<DerivedPD> &pd1,
 		return;
 	}
 
-	Eigen::Index vertex_dim = vertices.cols();
-	Eigen::Index vertices_per_face = faces.cols();
+	const Eigen::Index vertex_dim = vertices.cols();
+	const Eigen::Index vertices_per_face = faces.cols();
 
 	using RowMatrixF3 =
 		Eigen::Matrix<typename DerivedV::Scalar, DerivedF::RowsAtCompileTime, 3,
 	                  Eigen::RowMajor>;
 
-	RowMatrixF3 edge0{vertices(faces.col(2).array(), Eigen::all) -
-	                  vertices(faces.col(1).array(), Eigen::all)};
-	RowMatrixF3 edge1{vertices(faces.col(0).array(), Eigen::all) -
-	                  vertices(faces.col(2).array(), Eigen::all)};
-	RowMatrixF3 edge2{vertices(faces.col(1).array(), Eigen::all) -
-	                  vertices(faces.col(0).array(), Eigen::all)};
+	const RowMatrixF3 edge0{vertices(faces.col(2).array(), Eigen::all) -
+	                        vertices(faces.col(1).array(), Eigen::all)};
+	const RowMatrixF3 edge1{vertices(faces.col(0).array(), Eigen::all) -
+	                        vertices(faces.col(2).array(), Eigen::all)};
+	const RowMatrixF3 edge2{vertices(faces.col(1).array(), Eigen::all) -
+	                        vertices(faces.col(0).array(), Eigen::all)};
 
 	using MatrixF3 =
 		Eigen::Matrix<typename DerivedV::Scalar, DerivedF::RowsAtCompileTime, 3,
@@ -136,14 +136,14 @@ void principal_curvature_rus2004(Eigen::PlainObjectBase<DerivedPD> &pd1,
 			{e0_b0(i), e0_b1(i), 0.0}, {0.0, e0_b0(i), e0_b1(i)},
 			{e1_b0(i), e1_b1(i), 0.0}, {0.0, e1_b0(i), e1_b1(i)},
 			{e2_b0(i), e2_b1(i), 0.0}, {0.0, e2_b0(i), e2_b1(i)}};
-		Eigen::Vector<typename DerivedV::Scalar, 6> b{
+		const Eigen::Vector<typename DerivedV::Scalar, 6> b{
 			{(normal2.row(i) - normal1.row(i)).dot(face_basis0.row(i)),
 		     (normal2.row(i) - normal1.row(i)).dot(face_basis1.row(i)),
 		     (normal0.row(i) - normal2.row(i)).dot(face_basis0.row(i)),
 		     (normal0.row(i) - normal2.row(i)).dot(face_basis1.row(i)),
 		     (normal1.row(i) - normal0.row(i)).dot(face_basis0.row(i)),
 		     (normal1.row(i) - normal0.row(i)).dot(face_basis1.row(i))}};
-		Eigen::CompleteOrthogonalDecomposition<
+		const Eigen::CompleteOrthogonalDecomposition<
 			typename Eigen::Matrix<typename DerivedV::Scalar, 6, 3>>
 			cod(A);
 		second_fundamental_fb.row(i) = cod.solve(b).transpose();
@@ -183,9 +183,10 @@ void principal_curvature_rus2004(Eigen::PlainObjectBase<DerivedPD> &pd1,
 				face_basis1.row(row)};
 			if (angle > 1.0e-6) {
 				auto sin_angle = std::sin(angle);
-				Eigen::RowVector3<typename DerivedV::Scalar> rotation_axis{
-					(face_basis2.row(row).cross(vertex_basis2.row(v_idx)))
-						.normalized()};
+				const Eigen::RowVector3<typename DerivedV::Scalar>
+					rotation_axis{
+						(face_basis2.row(row).cross(vertex_basis2.row(v_idx)))
+							.normalized()};
 				fb0 = fb0 * cos_angle + rotation_axis.cross(fb0) * sin_angle +
 				      rotation_axis * rotation_axis.dot(fb0) * (1 - cos_angle);
 				fb1 = fb1 * cos_angle + rotation_axis.cross(fb1) * sin_angle +
@@ -229,7 +230,7 @@ void principal_curvature_rus2004(Eigen::PlainObjectBase<DerivedPD> &pd1,
 		Eigen::Vector2<typename DerivedV::Scalar> eigval{es.eigenvalues()};
 		pv1(row) = eigval(0);
 		pv2(row) = eigval(1);
-		Eigen::Matrix2<typename DerivedV::Scalar> eigvec{
+		const Eigen::Matrix2<typename DerivedV::Scalar> eigvec{
 			es.eigenvectors().transpose()};
 		Eigen::Matrix<typename DerivedPD::Scalar, 2, 3> pd =
 			(eigvec * (Eigen::Matrix<typename DerivedV::Scalar, 2, 3>()
