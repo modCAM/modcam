@@ -2,5 +2,5 @@
 
 # building the documentation
 sphinx
-breathe
+breathe >= 5.0.0a5
 sphinx-book-theme
