@@ -23,8 +23,7 @@ namespace modcam::mesh {
 
 /**
  * Compute an orthonormal set of basis vectors for each vertex in a mesh.
- * Algorithm developed 2024 by <a
- * href="https://github.com/prosilio">prosilio</a>
+ * Algorithm by @cite prosilio2024
  *
  * Each vertex in the mesh is assigned a local coordinate system, where the
  * z-axis is aligned with the vertex normal.
