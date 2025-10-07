@@ -112,7 +112,30 @@ if(MODCAM_ENABLE_LINTING)
 	set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_EXECUTABLE} -p ${CMAKE_BINARY_DIR})
 	configure_file(.clang-tidy .clang-tidy COPYONLY)
 
-	find_program(RUN_CLANG_TIDY_EXECUTABLE run-clang-tidy REQUIRED)
+	if(NOT RUN_CLANG_TIDY_EXECUTABLE)
+		find_program(
+			RUN_CLANG_TIDY_EXECUTABLE
+			NAMES
+				run-clang-tidy
+				run-clang-tidy-21
+				run-clang-tidy-20
+				run-clang-tidy-19
+				run-clang-tidy-18
+				run-clang-tidy-17
+				run-clang-tidy-16
+				run-clang-tidy-15
+		)
+		if (NOT RUN_CLANG_TIDY_EXECUTABLE)
+			string(
+				CONCAT RUN_CLANG_TIDY_ERR_MSG
+				"run-clang-tidy was not found. Please specify the path to "
+				"run-clang-tidy as a command line argument:\n"
+				"    -D RUN_CLANG_TIDY_EXECUTABLE=/path/to/run-clang-tidy"
+			)
+			message(FATAL_ERROR ${RUN_CLANG_TIDY_ERR_MSG})
+		endif()
+	endif()
+
 	add_custom_target(
 		run-clang-tidy ALL
 		COMMAND ${RUN_CLANG_TIDY_EXECUTABLE}
