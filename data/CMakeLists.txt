@@ -43,5 +43,6 @@ cmrc_add_resource_library(
 )
 
 if(MODCAM_ENABLE_LINTING)
+	add_dependencies(run-clang-tidy modCAM::data)
 	configure_file(.clang-tidy .clang-tidy COPYONLY)
 endif()

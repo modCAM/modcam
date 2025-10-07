@@ -80,6 +80,48 @@ endif()
 # All dependencies here
 include(modcam_dependencies)
 
+# Linting/static analysis
+if(MODCAM_ENABLE_LINTING)
+	set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+
+	if(NOT CLANG_TIDY_EXECUTABLE)
+		find_program(
+			CLANG_TIDY_EXECUTABLE
+			NAMES
+				clang-tidy
+				clang-tidy-21
+				clang-tidy-20
+				clang-tidy-19
+				clang-tidy-18
+				clang-tidy-17
+				clang-tidy-16
+				clang-tidy-15
+		)
+		if (NOT CLANG_TIDY_EXECUTABLE)
+			string(
+				CONCAT CLANG_TIDY_ERR_MSG
+				"clang-tidy was not found. Please specify the path to "
+				"clang-tidy as a command line argument:\n"
+				"    -D CLANG_TIDY_EXECUTABLE=/path/to/clang-tidy"
+			)
+			message(FATAL_ERROR ${CLANG_TIDY_ERR_MSG})
+		endif()
+	endif()
+	
+	# set(CMAKE_C_CLANG_TIDY ${CLANG_TIDY_EXECUTABLE} -p ${CMAKE_BINARY_DIR})
+	set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_EXECUTABLE} -p ${CMAKE_BINARY_DIR})
+	configure_file(.clang-tidy .clang-tidy COPYONLY)
+
+	find_program(RUN_CLANG_TIDY_EXECUTABLE run-clang-tidy REQUIRED)
+	add_custom_target(
+		run-clang-tidy ALL
+		COMMAND ${RUN_CLANG_TIDY_EXECUTABLE}
+			-clang-tidy-binary ${CLANG_TIDY_EXECUTABLE}
+			-p ${CMAKE_BINARY_DIR}
+			-warnings-as-errors '*'
+	)
+endif()
+
 # Project data
 # The data may include rather large files such as triangle meshes, so they are 
 # only included if necessary.
@@ -92,68 +134,6 @@ endif()
 if(MODCAM_ENABLE_TESTING)
 	enable_testing()
     add_subdirectory(tests)
-endif()
-
-# Linting/static analysis
-if(MODCAM_ENABLE_LINTING)
-	# Make sure that you set the following variables in a toolchain file, in a 
-	# preset, or on the command line:
-	#     CMAKE_EXPORT_COMPILE_COMMANDS = TRUE
-	#     CLANG_TIDY_EXECUTABLE = <path/to/clang-tidy>, for example /usr/bin/clang-tidy
-	#     CMAKE_CXX_CLANG_TIDY = ${CLANG_TIDY_EXECUTABLE} -p ${CMAKE_BINARY_DIR}
-	#     [Optional] CMAKE_C_CLANG_TIDY = ${CLANG_TIDY_EXECUTABLE} -p ${CMAKE_BINARY_DIR}
-
-	if(NOT DEFINED CMAKE_EXPORT_COMPILE_COMMANDS)
-		string(
-			CONCAT ERR_MSG
-			"MODCAM_ENABLE_LINTING is ON, but CMAKE_EXPORT_COMPILE_COMMANDS is not \n"
-			"defined. CMAKE_EXPORT_COMPILE_COMMANDS should be set to ON in a \n"
-			"toolchain file, in a preset, or on the command line."
-		)
-		message(FATAL_ERROR ${ERR_MSG})
-	endif()
-	if(NOT CMAKE_EXPORT_COMPILE_COMMANDS)
-		string(
-			CONCAT ERR_MSG
-			"MODCAM_ENABLE_LINTING is ON, but CMAKE_EXPORT_COMPILE_COMMANDS is OFF. \n"
-			"CMAKE_EXPORT_COMPILE_COMMANDS should be set to ON in a toolchain file, \n"
-			"in a preset, or on the command line."
-		)
-		message(FATAL_ERROR ${ERR_MSG})
-	endif()
-	if(NOT DEFINED CLANG_TIDY_EXECUTABLE)
-		string(
-			CONCAT ERR_MSG
-			"MODCAM_ENABLE_LINTING is ON, but CLANG_TIDY_EXECUTABLE is undefined. \n"
-			"CLANG_TIDY_EXECUTABLE should be set in a toolchain file, in a preset, \n"
-			"or on the command line. It should be the clang-tidy filepath, such as \n"
-			"/usr/bin/clang-tidy. Using a toolchain file, you can find clang-tidy \n"
-			"via the following CMake command: \n"
-			"    find_program(CLANG_TIDY_EXECUTABLE clang-tidy REQUIRED)"
-		)
-		message(FATAL_ERROR ${ERR_MSG})
-	endif()
-	if(NOT DEFINED CMAKE_CXX_CLANG_TIDY)
-		string(
-			CONCAT ERR_MSG
-			"MODCAM_ENABLE_LINTING is ON, but CMAKE_CXX_CLANG_TIDY is undefined. \n"
-			"CMAKE_CXX_CLANG_TIDY should be set in a toolchain file, in a preset, \n"
-			"or on the command line. It should contain the clang-tidy command. Using \n"
-			"a toolchain file, you can set it via the following CMake command: \n"
-			"    set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_EXECUTABLE} -p ${CMAKE_BINARY_DIR})"
-		)
-		message(FATAL_ERROR ${ERR_MSG})
-	endif()
-
-	configure_file(.clang-tidy .clang-tidy COPYONLY)
-
-	find_program(RUN_CLANG_TIDY_EXECUTABLE run-clang-tidy REQUIRED)
-	add_custom_target(
-		run-clang-tidy ALL
-		COMMAND ${RUN_CLANG_TIDY_EXECUTABLE}
-			-clang-tidy-binary ${CLANG_TIDY_EXECUTABLE}
-			-p ${CMAKE_BINARY_DIR}
-	)
 endif()
 
 # Project files

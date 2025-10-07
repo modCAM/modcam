@@ -62,7 +62,7 @@ jobs:
           cmake -S .
           -DCMAKE_CXX_COMPILER=${{ env.CPP_COMPILER }}
           -DCMAKE_BUILD_TYPE=Release
-          --preset "build-tests"
+          --preset linting
 
       - name: Build
         run: cmake --build build --config Release
