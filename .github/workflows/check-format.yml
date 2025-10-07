@@ -1,0 +1,28 @@
+# This workflow checks C++ source code formatting.
+
+name: Format check
+
+on: pull_request
+
+jobs:
+  check-format:
+    name: Check source code formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Check formatting
+        id: check-format
+        run: >
+          find include src -regex '.*\.\(cpp\|hpp\|c\|h\)' 
+          -exec clang-format --style=file --dry-run --Werror {} \;
+
+      - name: How to format
+        if: ${{ failure() && steps.check-format.conclusion == 'failure' }}
+        run: |
+          echo 'Files need to be formatted! Run the following command to fix them:'
+          echo '  find include src -regex '.*\.\(cpp\|hpp\|c\|h\)' -exec clang-format --style=file -i {} \;'
