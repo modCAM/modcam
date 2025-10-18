@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+title: modCAM
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - name: "modCAM Contributors"
+    email: modCAM.github@proton.me
+repository-code: "https://github.com/modCAM/modcam"
+abstract: >-
+  ModCAM is free and open source software for computer aided
+  manufacturing (CAM) research. It is a library of
+  algorithms for the control of manufacturing machinery,
+  such as CNC lathes and mills and 3D printers.
+keywords:
+  - Computer Aided Manufacturing
+  - CAM
+license: MPL-2.0
