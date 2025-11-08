@@ -72,7 +72,7 @@ jobs:
         if: env.version_changed == 'false'
         run: |
           cmake -P ./cmake/update_version.cmake
-          python ./scripts/changelog.py
+          python ./tools/changelog.py
 
       - name: Commit new version
         if: env.version_changed == 'false'

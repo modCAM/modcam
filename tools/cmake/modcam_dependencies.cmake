@@ -36,7 +36,7 @@ endif()
 
 set(py3_exe ${Python3${Python3_ARTIFACTS_PREFIX}_EXECUTABLE})
 execute_process(
-	COMMAND ${py3_exe} ${modCAM_SOURCE_DIR}/scripts/is_virtual_env.py
+	COMMAND ${py3_exe} ${modCAM_SOURCE_DIR}/tools/is_virtual_env.py
 	OUTPUT_VARIABLE is_virtual_env
 	OUTPUT_STRIP_TRAILING_WHITESPACE
 	ECHO_ERROR_VARIABLE

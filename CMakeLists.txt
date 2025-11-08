@@ -10,7 +10,7 @@
 
 cmake_minimum_required(VERSION 4.0)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/tools/cmake")
 include(modcam_version)
 
 project(
@@ -169,5 +169,5 @@ if(PROJECT_IS_TOP_LEVEL)
 		CACHE PATH "CMake package config location"
 	)
 	mark_as_advanced(MODCAM_INSTALL_CMAKEDIR)
-	add_subdirectory(packaging)
+	add_subdirectory(tools/packaging)
 endif()
