@@ -39,7 +39,7 @@ option(MODCAM_ENABLE_LINTING "Run static analysis checks" OFF)
 cmake_dependent_option(
 	MODCAM_BUILD_PROJECT
 	"Compile the code. Turn off to build only the documentation." ON
-	"NOT MODCAM_ENABLE_TESTING AND NOT MODCAM_ENABLE_LINTING" ON
+	"MODCAM_BUILD_DOC AND NOT MODCAM_ENABLE_TESTING AND NOT MODCAM_ENABLE_LINTING" ON
 )
 cmake_dependent_option(
 	MODCAM_FORCE_VIRTUAL_ENV
