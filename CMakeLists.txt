@@ -33,7 +33,6 @@ if(PROJECT_IS_TOP_LEVEL AND EXISTS "${LOC_PATH}")
 endif()
 
 # Project options
-option(MODCAM_FORCE_VIRTUAL_ENV "Throw an error if a Python virtual environment is not active." ON)
 option(MODCAM_BUILD_DOC "Build documentation" OFF)
 option(MODCAM_ENABLE_TESTING "Build tests" OFF)
 option(MODCAM_ENABLE_LINTING "Run static analysis checks" OFF)
@@ -107,7 +106,7 @@ if(MODCAM_ENABLE_LINTING)
 			message(FATAL_ERROR ${CLANG_TIDY_ERR_MSG})
 		endif()
 	endif()
-	
+
 	# set(CMAKE_C_CLANG_TIDY ${CLANG_TIDY_EXECUTABLE} -p ${CMAKE_BINARY_DIR})
 	set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_EXECUTABLE} -p ${CMAKE_BINARY_DIR})
 	configure_file(.clang-tidy .clang-tidy COPYONLY)
@@ -163,11 +162,45 @@ endif()
 add_subdirectory(src)
 
 # Packaging
+# Allow package maintainers to freely override the path for the configs
+set(MODCAM_INSTALL_CMAKEDIR "share/cmake/modCAM"
+	CACHE PATH "CMake package config location"
+)
+mark_as_advanced(MODCAM_INSTALL_CMAKEDIR)
+
+install(
+	EXPORT modCAM_Targets
+	DESTINATION "${MODCAM_INSTALL_CMAKEDIR}"
+	NAMESPACE modCAM::
+	FILE modCAM-Targets.cmake
+)
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+	"${CMAKE_CURRENT_BINARY_DIR}/modCAMConfigVersion.cmake"
+	COMPATIBILITY AnyNewerVersion
+	ARCH_INDEPENDENT
+)
+
+install(
+	FILES
+		"${CMAKE_CURRENT_LIST_DIR}/tools/cmake/modCAMConfig.cmake"
+		"${CMAKE_CURRENT_BINARY_DIR}/modCAMConfigVersion.cmake"
+	DESTINATION "${MODCAM_INSTALL_CMAKEDIR}"
+)
+
+# Install the VERSION file for other projects to reference
+install(
+	FILES "${modCAM_SOURCE_DIR}/VERSION"
+	DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+)
+
 if(PROJECT_IS_TOP_LEVEL)
-	# Allow package maintainers to freely override the path for the configs
-	set(MODCAM_INSTALL_CMAKEDIR "share/cmake/modCAM"
-		CACHE PATH "CMake package config location"
-	)
-	mark_as_advanced(MODCAM_INSTALL_CMAKEDIR)
 	add_subdirectory(tools/packaging)
+else()
+	mark_as_advanced(MODCAM_BUILD_DOC)
+	mark_as_advanced(MODCAM_ENABLE_TESTING)
+	mark_as_advanced(MODCAM_ENABLE_LINTING)
+	mark_as_advanced(MODCAM_BUILD_PROJECT)
+	mark_as_advanced(MODCAM_FORCE_VIRTUAL_ENV)
 endif()

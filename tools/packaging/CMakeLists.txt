@@ -8,33 +8,6 @@
 # SPDX-FileCopyrightText: Copyright contributors to the modCAM project.
 # SPDX-License-Identifier: MPL-2.0
 
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-	modCAMConfigVersion.cmake
-	COMPATIBILITY AnyNewerVersion
-	ARCH_INDEPENDENT
-)
-
-install(
-	FILES
-	    modCAMConfig.cmake
-		"${CMAKE_CURRENT_BINARY_DIR}/modCAMConfigVersion.cmake"
-	DESTINATION "${MODCAM_INSTALL_CMAKEDIR}"
-)
-
-# Install the VERSION file for other projects to reference
-install(
-	FILES "${modCAM_SOURCE_DIR}/VERSION"
-	DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-)
-
-install(
-    EXPORT modCAM_Targets
-    DESTINATION "${MODCAM_INSTALL_CMAKEDIR}"
-    NAMESPACE modCAM::
-    FILE modCAM-Targets.cmake
-)
-
 set(CPACK_PACKAGE_NAME modCAM)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Free and open source CAM software")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY ${CPACK_PACKAGE_NAME})
