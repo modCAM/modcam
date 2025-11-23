@@ -13,7 +13,7 @@
 # following filter:
 #   paths:
 #     - 'include/**'
-#     - 'packaging/**'
+#     - 'tools/packaging/**'
 #     - 'src/**'
 #     - '!VERSION'
 # However, there is a known issue with the paths filter:
@@ -31,7 +31,7 @@ on:
       - main
     paths:
       - "include/**"
-      - "packaging/**"
+      - "tools/packaging/**"
       - "src/**"
 
 env:
