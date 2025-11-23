@@ -9,7 +9,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 # Run this script to update the version in the VERSION file:
-#   cmake -P ./cmake/update_version.cmake
+#   cmake -P ./tools/cmake/update_version.cmake
 
 # Attempt to sanitize the input, to the extent that CMake allows it.
 file(

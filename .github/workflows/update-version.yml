@@ -71,7 +71,7 @@ jobs:
       - name: Update version
         if: env.version_changed == 'false'
         run: |
-          cmake -P ./cmake/update_version.cmake
+          cmake -P ./tools/cmake/update_version.cmake
           python ./tools/changelog.py
 
       - name: Commit new version
