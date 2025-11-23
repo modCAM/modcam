@@ -42,6 +42,8 @@ jobs:
       run:
         shell: bash
     container: ghcr.io/modcam/devcontainer:latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
@@ -98,6 +100,8 @@ jobs:
       run:
         shell: bash
     container: ghcr.io/modcam/devcontainer:latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
