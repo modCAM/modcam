@@ -8,3 +8,4 @@ build*/
 .venv/
 CMakeUserPresets.json
 modcam_version.cpp
+vcpkg_installed/
