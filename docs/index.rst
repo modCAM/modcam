@@ -2,13 +2,16 @@
 modCAM documentation
 ####################
 
-modCAM is free and open source software for Computer Aided Manufacturing (CAM)
+ModCAM is free and open source software for Computer Aided Manufacturing (CAM)
 research.
 
 
 .. toctree::
    :caption: Getting Started
    :maxdepth: 2
+
+   getting-started
+   CONTRIBUTING
 
 .. toctree::
    :caption: Reference
