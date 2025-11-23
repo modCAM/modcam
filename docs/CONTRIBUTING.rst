@@ -6,10 +6,10 @@ Welcome, and thank you for your interest in making a difference! ModCAM relies o
 
 If you have a bug fix or an enhancement you'd like to make, this document will guide you through the process. Here you'll find
 
-* :ref:`what sort of contributions we do and don't want <_project-scope>`
-* :ref:`where to find information and ask questions <_comms-channels>`
-* :ref:`how to contribute <_how-to-contribute>`
-* :ref:`how to style your code <_style-guide>`
+* :ref:`what sort of contributions we do and don't want <project-scope>`
+* :ref:`where to find information and ask questions <comms-channels>`
+* :ref:`how to contribute <how-to-contribute>`
+* :ref:`how to style your code <style-guide>`
 
 Please review these guidelines and the code of conduct before making your contribution so that we can maintain consistent, high quality code.
 
@@ -48,7 +48,7 @@ If you find a bug, or you want to suggest an enhancement, please start by openin
 * Make sure that you are using the latest version.
 * Read the documentation carefully to check if the functionality already exists.
 * Perform a search to see if the enhancement or bug fix has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.
-* For new features, make sure your idea fits within the :ref:`scope <_project-scope>` of the project.
+* For new features, make sure your idea fits within the :ref:`scope <project-scope>` of the project.
 
 If you want to work on the improvements yourself, thank you! You can fork the repository, make your changes, and open a `pull request`_.
 
@@ -97,7 +97,7 @@ You can use the following presets and CMake options to configure your build:
 
 As an example, to build modCAM and run the unit tests, do ::
 
-	cmake -S . -D CMAKE_BUILD_TYPE=Release --preset build-minimal
+	cmake -S . -D CMAKE_BUILD_TYPE=Release --preset build-tests
 	cmake --build build/
 	ctest --test-dir build/
 
@@ -109,7 +109,7 @@ ModCAM uses Python-based tools to build the documentation. The necessary Python 
 	python -m venv .venv                  # Create a Python virtual environment
 	source .venv/bin/activate             # Activate the environment
 	pip install -r requirements.txt       # Install the necessary Python packages
-	cmake -S . --preset "build-docs-only" # Tell CMake you want to build only the docs
+	cmake -S . --preset build-docs-only   # Tell CMake you want to build only the docs
 	cmake --build build --config Release  # Build the docs
 
 .. _style-guide:
@@ -160,9 +160,9 @@ If you're writing a new implementation of an existing function, then try to matc
 Documentation
 -------------
 
-Functions should be documented using `Doxygen`_ in the `Javadoc style`_. The Documentation should follow `Diataxis reference principles`_. Namely, it should be a neutral description of what the function does and how to use it. It should not attempt to instruct or explain why. How-to guides and tutorials cover instruction and explanation elsewhere.
+Functions should be documented using `Doxygen`_ in the `Javadoc style`_. The documentation should follow `Diataxis reference principles`_. Namely, it should be a neutral description of what the function does and how to use it. It should not attempt to instruct or explain why. How-to guides and tutorials cover instruction and explanation elsewhere.
 
-Citations are strongly encouraged. Citation information should go in the BibTeX files docs/modCAM.bib. They can be referenced with the Doxygen `@cite`_ command.
+Citations are strongly encouraged. Citation information should go in the BibTeX file docs/modCAM.bib. They can be referenced with the Doxygen `@cite`_ command.
 
 .. _Doxygen: https://www.doxygen.nl/
 
