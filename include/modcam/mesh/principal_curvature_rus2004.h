@@ -39,6 +39,9 @@ namespace modcam::mesh {
  * neighborhoods. Although the algorithm in @cite Rusinkiewicz2004 can be used
  * to compute curvature derivates, that is not done here.
  *
+ * If the @p vertices array is empty, then all returned arrays are empty. If the
+ * @p faces array is empty, then all returned array values are set to NaN.
+ *
  * @param[out] pd1 V-by-3 maximal curvature direction for each vertex.
  * @param[out] pd2 V-by-3 minimal curvature direction for each vertex.
  * @param[out] pv1 V-by-1 maximal curvature value for each vertex.

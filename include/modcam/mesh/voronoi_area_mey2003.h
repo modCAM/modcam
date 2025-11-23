@@ -40,7 +40,9 @@ namespace modcam::mesh {
  *
  * @param[out] v_area F-by-3 matrix of the Voronoi area of each vertex in each
  * triangle. Each value in this array corresponds to a triangle corner in the
- * \p faces array.
+ * @p faces array. If the @p faces array is empty, then an empty array is
+ * returned. If the @p vertices array is empty, then @p v_area values are set to
+ * zero.
  * @param[in] vertices V-by-3 matrix of mesh vertex Cartesian coordinates
  * @param[in] faces F-by-3 matrix of face (triangle) indices. Each row
  * represents a triangle by indexing three vertices (rows) from the \p vertices

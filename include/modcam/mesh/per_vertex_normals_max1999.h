@@ -32,7 +32,9 @@ namespace modcam::mesh {
  * Vertex normals are computed using a weighted sum of their surrounding face
  * (triangle) normals.
  *
- * @param[out] normals V-by-3 matrix of mesh vertex 3D normals
+ * @param[out] normals V-by-3 matrix of mesh vertex 3D normals. If the
+ * @p vertices array is empty, then an empty array is returned. If the @p faces
+ * array is empty, then @p normals values are set to NaN.
  * @param[in] vertices V-by-3 matrix of mesh vertex Cartesian coordinates
  * @param[in] faces F-by-3 matrix of face (triangle) indices. Each row
  * represents a triangle by indexing three vertices (rows) from the \p vertices
