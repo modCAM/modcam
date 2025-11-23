@@ -16,6 +16,8 @@ jobs:
   check-version:
     name: Check version
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout

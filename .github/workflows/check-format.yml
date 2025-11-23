@@ -8,6 +8,8 @@ jobs:
   check-format:
     name: Check source code formatting
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
