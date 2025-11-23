@@ -109,10 +109,32 @@ jobs:
           cmake -S . --preset "build-docs-only"
           cmake --build build --config Release
 
+  sbom:
+    name: Software bill of materials
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    container: ghcr.io/modcam/devcontainer:latest
+    needs: [build-and-test, build-docs]
+    if: github.ref_name == github.event.repository.default_branch
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update dependency graph
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VCPKG_FEATURE_FLAGS: dependencygraph
+        run: vcpkg install --dry-run
+
   create-release:
     name: Create release
     runs-on: ubuntu-latest
-    needs: [build-and-test, build-docs]
+    needs: [sbom]
     if: github.ref_name == github.event.repository.default_branch
     permissions:
       contents: write
@@ -128,9 +150,28 @@ jobs:
           path: package-artifacts
           merge-multiple: true
 
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.SBOM_API_APP_ID }}
+          private-key: ${{ secrets.SBOM_API_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+
+      - name: Download SBOM
+        run: >
+          curl -L \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $SBOM_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/$REPO/dependency-graph/sbom \
+            --output modcam-sbom.json
+        env:
+          SBOM_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPO: ${{ github.repository }}
+
       - name: Create release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           version="$(< ${{ env.VERSION_FILE }})"
-          gh release create $version ./package-artifacts/*.tar.gz ./package-artifacts/*.zip CHANGELOG.md
+          gh release create $version ./package-artifacts/*.tar.gz ./package-artifacts/*.zip CHANGELOG.md modcam-sbom.json
