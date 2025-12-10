@@ -190,3 +190,16 @@ See the following resources for more information:
 * https://cbea.ms/git-commit/
 * https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
 * https://git-scm.com/book/en/v2/Distributed-Git-Contributing-to-a-Project#_commit_guidelines
+
+Changelog
+---------
+
+The changelog style is based on `Common Changelog`_, though it's been adapted for Calendar Versioning. Before merging a pull request, you should update the changelog according to the `Common Changelog`_ guidelines, with the following deviation:
+
+Do not use the ``## VERSION - DATE`` release header. Since modCAM uses Calendar Versioning, this info is filled in by the CI workflow. Instead, use a template placeholder::
+
+	## [LATEST] ([#<pull request number>](<pull request URL>))
+
+Here, ``LATEST`` should be left as-is. The CI workflow will fill in the appropriate version. You should replace ``<pull request number>`` and ``<pull request URL>`` with the relevant pull request details.
+
+.. _Common Changelog: https://common-changelog.org/
