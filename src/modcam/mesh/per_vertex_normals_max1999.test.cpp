@@ -84,7 +84,7 @@ TEST_CASE("Test per-vertex normals function")
 			CHECK_FALSE(vertex_normals(Eigen::seq(0, 5), Eigen::all)
 			                .array()
 			                .isNaN()
-			                .all());
+			                .any());
 			CHECK(vertex_normals(Eigen::seq(6, 11), Eigen::all)
 			          .array()
 			          .isNaN()
@@ -99,7 +99,7 @@ TEST_CASE("Test per-vertex normals function")
 			CHECK_FALSE(vertex_normals(Eigen::seq(0, 5), Eigen::all)
 			                .array()
 			                .isNaN()
-			                .all());
+			                .any());
 			CHECK(vertex_normals(Eigen::seq(6, 11), Eigen::all)
 			          .array()
 			          .isNaN()
