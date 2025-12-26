@@ -31,20 +31,21 @@ TEST_CASE("Test per-vertex normals function")
 	const auto r = 1.0 / (2.0 * std::sin(pi / 5.0));
 	using Array12d = Eigen::Array<double, 12, 1>;
 	using Array5d = Eigen::Array<double, 5, 1>;
-	Array12d phi = Array12d::Zero();
-	phi(Eigen::seq(1, 5)) = Array5d::Constant(std::asin(r));
-	phi(Eigen::seq(6, 10)) = Array5d::Constant(-std::asin(r));
-	phi(11) = pi;
-	Array12d theta = Array12d::Zero();
-	theta(Eigen::seq(1, 5)) = Array5d::LinSpaced(5, 0.0, 8.0 * pi / 5.0);
-	theta(Eigen::seq(6, 10)) = Array5d::LinSpaced(5, pi / 5.0, 9.0 * pi / 5.0);
+	Array12d zenith_angle = Array12d::Zero();
+	zenith_angle(Eigen::seq(1, 5)) = Array5d::Constant(std::asin(r));
+	zenith_angle(Eigen::seq(6, 10)) = Array5d::Constant(-std::asin(r));
+	zenith_angle(11) = pi;
+	Array12d azimuth = Array12d::Zero();
+	azimuth(Eigen::seq(1, 5)) = Array5d::LinSpaced(5, 0.0, 8.0 * pi / 5.0);
+	azimuth(Eigen::seq(6, 10)) =
+		Array5d::LinSpaced(5, pi / 5.0, 9.0 * pi / 5.0);
 
 	SUBCASE("Icosahedron")
 	{
 		RowMatrixX3d vertices = RowMatrixX3d::Zero(12, 3);
-		vertices.col(0) = Eigen::sin(phi) * Eigen::cos(theta);
-		vertices.col(1) = Eigen::sin(phi) * Eigen::sin(theta);
-		vertices.col(2) = Eigen::cos(phi);
+		vertices.col(0) = Eigen::sin(zenith_angle) * Eigen::cos(azimuth);
+		vertices.col(1) = Eigen::sin(zenith_angle) * Eigen::sin(azimuth);
+		vertices.col(2) = Eigen::cos(zenith_angle);
 		// vertices.rowwise().normalize(); // Set radius to 1.0
 		constexpr auto radius = 1.0;
 		vertices *= radius;
@@ -66,9 +67,9 @@ TEST_CASE("Test per-vertex normals function")
 	SUBCASE("Partial icosahedron")
 	{
 		RowMatrixX3d vertices = RowMatrixX3d::Zero(12, 3);
-		vertices.col(0) = Eigen::sin(phi) * Eigen::cos(theta);
-		vertices.col(1) = Eigen::sin(phi) * Eigen::sin(theta);
-		vertices.col(2) = Eigen::cos(phi);
+		vertices.col(0) = Eigen::sin(zenith_angle) * Eigen::cos(azimuth);
+		vertices.col(1) = Eigen::sin(zenith_angle) * Eigen::sin(azimuth);
+		vertices.col(2) = Eigen::cos(zenith_angle);
 		vertices.rowwise().normalize(); // Set radius to 1.0
 		constexpr auto radius = 1.0;
 		vertices *= radius;
@@ -110,9 +111,9 @@ TEST_CASE("Test per-vertex normals function")
 	{
 		Eigen::Matrix<double, 12, 3> vertices;
 		vertices.setZero();
-		vertices.col(0) = Eigen::sin(phi) * Eigen::cos(theta);
-		vertices.col(1) = Eigen::sin(phi) * Eigen::sin(theta);
-		vertices.col(2) = Eigen::cos(phi);
+		vertices.col(0) = Eigen::sin(zenith_angle) * Eigen::cos(azimuth);
+		vertices.col(1) = Eigen::sin(zenith_angle) * Eigen::sin(azimuth);
+		vertices.col(2) = Eigen::cos(zenith_angle);
 		vertices.rowwise().normalize(); // Set radius to 1.0
 		constexpr auto radius = 1.0;
 		vertices *= radius;
@@ -133,9 +134,9 @@ TEST_CASE("Test per-vertex normals function")
 	SUBCASE("Empty face array")
 	{
 		RowMatrixX3d vertices = RowMatrixX3d::Zero(12, 3);
-		vertices.col(0) = Eigen::sin(phi) * Eigen::cos(theta);
-		vertices.col(1) = Eigen::sin(phi) * Eigen::sin(theta);
-		vertices.col(2) = Eigen::cos(phi);
+		vertices.col(0) = Eigen::sin(zenith_angle) * Eigen::cos(azimuth);
+		vertices.col(1) = Eigen::sin(zenith_angle) * Eigen::sin(azimuth);
+		vertices.col(2) = Eigen::cos(zenith_angle);
 		vertices.rowwise().normalize(); // Set radius to 1.0
 		const RowMatrixX3i faces(0, 3);
 		RowMatrixX3d vertex_normals;
