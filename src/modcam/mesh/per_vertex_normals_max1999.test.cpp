@@ -142,6 +142,7 @@ TEST_CASE("Test per-vertex normals function")
 		RowMatrixX3d vertex_normals;
 		mesh::per_vertex_normals_max1999(vertex_normals, vertices, faces);
 		CHECK(vertex_normals.size() == vertices.size());
+		CHECK(vertex_normals.array().isNaN().all());
 	}
 	SUBCASE("Empty vertex array")
 	{
