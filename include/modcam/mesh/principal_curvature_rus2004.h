@@ -46,7 +46,8 @@ namespace modcam::mesh {
  * @param[out] pd2 V-by-3 minimal curvature direction for each vertex.
  * @param[out] pv1 V-by-1 maximal curvature value for each vertex.
  * @param[out] pv2 V-by-1 minimal curvature value for each vertex.
- * @param[in] vertices V-by-3 matrix of mesh vertex Cartesian coordinates
+ * @param[in] vertices V-by-3 matrix of vertex Cartesian coordinates. Each row
+ * specifies a vertex's 3D position.
  * @param[in] faces F-by-3 matrix of face (triangle) indices. Each row
  * represents a triangle by indexing three vertices (rows) from the \p vertices
  * array.

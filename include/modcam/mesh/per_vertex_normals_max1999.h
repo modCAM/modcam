@@ -27,15 +27,16 @@ namespace modcam::mesh {
 
 /**
  * Compute the per-vertex normal vectors for a set of vertices and faces, as
- * described in @cite Max1999
+ * described in @cite Max1999.
  *
  * Vertex normals are computed using a weighted sum of their surrounding face
  * (triangle) normals.
  *
- * @param[out] normals V-by-3 matrix of mesh vertex 3D normals. If the
+ * @param[out] normals V-by-3 matrix of per-vertex normal vectors If the
  * @p vertices array is empty, then an empty array is returned. If the @p faces
  * array is empty, then @p normals values are set to NaN.
- * @param[in] vertices V-by-3 matrix of mesh vertex Cartesian coordinates
+ * @param[in] vertices V-by-3 matrix of vertex Cartesian coordinates. Each row
+ * specifies a vertex's 3D position.
  * @param[in] faces F-by-3 matrix of face (triangle) indices. Each row
  * represents a triangle by indexing three vertices (rows) from the \p vertices
  * array.

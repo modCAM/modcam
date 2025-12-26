@@ -43,7 +43,8 @@ namespace modcam::mesh {
  * @p faces array. If the @p faces array is empty, then an empty array is
  * returned. If the @p vertices array is empty, then @p v_area values are set to
  * zero.
- * @param[in] vertices V-by-3 matrix of mesh vertex Cartesian coordinates
+ * @param[in] vertices V-by-3 (or V-by-2) matrix of vertex Cartesian
+ * coordinates. Each row specifies a vertex's 3D (or 2D) position.
  * @param[in] faces F-by-3 matrix of face (triangle) indices. Each row
  * represents a triangle by indexing three vertices (rows) from the \p vertices
  * array.
