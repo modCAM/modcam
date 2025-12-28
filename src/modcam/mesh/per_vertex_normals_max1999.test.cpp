@@ -33,7 +33,7 @@ TEST_CASE("Test per-vertex normals function")
 	using Array5d = Eigen::Array<double, 5, 1>;
 	Array12d zenith_angle = Array12d::Zero();
 	zenith_angle(Eigen::seq(1, 5)) = Array5d::Constant(std::asin(r));
-	zenith_angle(Eigen::seq(6, 10)) = Array5d::Constant(-std::asin(r));
+	zenith_angle(Eigen::seq(6, 10)) = Array5d::Constant(pi - std::asin(r));
 	zenith_angle(11) = pi;
 	Array12d azimuth = Array12d::Zero();
 	azimuth(Eigen::seq(1, 5)) = Array5d::LinSpaced(5, 0.0, 8.0 * pi / 5.0);
