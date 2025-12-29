@@ -98,6 +98,15 @@ TEST_CASE("Test principal curvature function")
 		Eigen::VectorXd pv1;
 		Eigen::VectorXd pv2;
 		mesh::principal_curvature_rus2004(pd1, pd2, pv1, pv2, vertices, faces);
+		Eigen::Index num_vertices{vertices.rows()};
+		CHECK(pv1.rows() == num_vertices);
+		CHECK(pv1.cols() == 1);
+		CHECK(pv2.rows() == num_vertices);
+		CHECK(pv2.cols() == 1);
+		CHECK(pd1.rows() == num_vertices);
+		CHECK(pd1.cols() == 3);
+		CHECK(pd2.rows() == num_vertices);
+		CHECK(pd2.cols() == 3);
 		CHECK(pv1.array().isNaN().all());
 		CHECK(pv2.array().isNaN().all());
 		CHECK(pd1.array().isNaN().all());

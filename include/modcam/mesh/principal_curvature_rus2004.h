@@ -67,11 +67,13 @@ void principal_curvature_rus2004(Eigen::PlainObjectBase<DerivedPD> &pd1,
 	assert(vertices.cols() == 3 && "vertices must have 3 columns");
 	assert(faces.cols() == 3 && "faces must have 3 columns");
 
-	if (vertices.size() == 0) {
-		pd1.derived().resize(0, 3);
-		pd2.derived().resize(0, 3);
-		pv1.derived().resize(0, 1);
-		pv2.derived().resize(0, 1);
+	auto num_vertices = vertices.rows();
+	pv1.derived().resize(num_vertices, 1);
+	pv2.derived().resize(num_vertices, 1);
+	pd1.derived().resize(num_vertices, 3);
+	pd2.derived().resize(num_vertices, 3);
+
+	if (num_vertices == 0) {
 		return;
 	}
 
@@ -162,7 +164,6 @@ void principal_curvature_rus2004(Eigen::PlainObjectBase<DerivedPD> &pd1,
 	// Compute the second fundamental form in the vertex basis frame.
 	RowMatrixF3 weights;
 	mesh::voronoi_area_mey2003(weights, vertices, faces);
-	auto num_vertices = vertices.rows();
 	Eigen::Array<typename DerivedV::Scalar, DerivedV::RowsAtCompileTime, 1>
 		sum_weights{
 			Eigen::Array<typename DerivedV::Scalar, DerivedV::RowsAtCompileTime,
@@ -221,10 +222,6 @@ void principal_curvature_rus2004(Eigen::PlainObjectBase<DerivedPD> &pd1,
 	}
 
 	// Compute per-vertex principal curvature from the second fundamental form.
-	pv1.derived().resize(num_vertices, 1);
-	pv2.derived().resize(num_vertices, 1);
-	pd1.derived().resize(num_vertices, 3);
-	pd2.derived().resize(num_vertices, 3);
 	Eigen::SelfAdjointEigenSolver<Eigen::Matrix2<typename DerivedV::Scalar>> es;
 	for (Eigen::Index row = 0; row < num_vertices; row++) {
 		auto a = second_fundamental_vb(row, 0) / sum_weights(row);
