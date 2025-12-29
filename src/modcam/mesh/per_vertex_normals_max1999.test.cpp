@@ -28,7 +28,7 @@ using RowMatrixX3f = Eigen::Matrix<float, Eigen::Dynamic, 3, Eigen::RowMajor>;
 TEST_CASE("Test per-vertex normals function")
 {
 	constexpr auto pi = std::numbers::pi;
-	const auto r = 1.0 / (2.0 * std::sin(pi / 5.0));
+	const auto r = 2.0 * std::sqrt(5.0) / 5.0;
 	using Array12d = Eigen::Array<double, 12, 1>;
 	using Array5d = Eigen::Array<double, 5, 1>;
 	Array12d zenith_angle = Array12d::Zero();
