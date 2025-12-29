@@ -91,7 +91,7 @@ TEST_CASE("Test principal curvature function")
 	SUBCASE("Empty face array")
 	{
 		const RowMatrixX3d vertices{
-			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 0.0, 0.0}};
+			{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.5, 1.0, 0.0}};
 		const Eigen::MatrixX3i faces(0, 3);
 		RowMatrixX3d pd1;
 		RowMatrixX3d pd2;
