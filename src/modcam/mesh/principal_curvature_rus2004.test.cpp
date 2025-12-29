@@ -125,7 +125,7 @@ TEST_CASE("Test principal curvature function")
 		using Array5d = Eigen::Array<double, 5, 1>;
 		Array12d phi = Array12d::Zero();
 		phi(Eigen::seq(1, 5)) = Array5d::Constant(std::asin(r));
-		phi(Eigen::seq(6, 10)) = Array5d::Constant(-std::asin(r));
+		phi(Eigen::seq(6, 10)) = Array5d::Constant(pi - std::asin(r));
 		phi(11) = pi;
 		Array12d theta = Array12d::Zero();
 		theta(Eigen::seq(1, 5)) = Array5d::LinSpaced(5, 0.0, 8.0 * pi / 5.0);
@@ -235,7 +235,7 @@ TEST_CASE("Test principal curvature function")
 		CHECK(pd1.cols() == 3);
 		CHECK(pd2.rows() == num_vertices);
 		CHECK(pd2.cols() == 3);
-		for (int i = 0; i < vertices.cols(); i++) {
+		for (int i = 0; i < vertices.rows(); i++) {
 			CHECK(pv1(i) == doctest::Approx(0.0));
 			CHECK(pv2(i) == doctest::Approx(1.0 / radius));
 			CHECK(pd1(i, 0) == doctest::Approx(0.0));
