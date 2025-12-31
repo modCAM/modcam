@@ -104,13 +104,27 @@ As an example, to build modCAM and run the unit tests, do ::
 Build the documentation
 -----------------------
 
-ModCAM uses Python-based tools to build the documentation. The necessary Python packages are in requirements.txt. To build the docs::
+ModCAM uses Python-based tools to build the documentation. The necessary Python packages are in ``requirements.txt`` and in ``pylock.toml``. The ``requirements.txt`` file will be removed once ``pylock.toml`` is fully supported.
 
-	python -m venv .venv                  # Create a Python virtual environment
-	source .venv/bin/activate             # Activate the environment
-	pip install -r requirements.txt       # Install the necessary Python packages
-	cmake -S . --preset build-docs-only   # Tell CMake you want to build only the docs
-	cmake --build build --config Release  # Build the docs
+To build the docs:
+
+.. tab-set-code::
+
+	.. code-block:: pip
+
+		python -m venv .venv                  # Create a Python virtual environment
+		source .venv/bin/activate             # Activate the environment
+		pip install -r requirements.txt       # Install the necessary Python packages
+		cmake -S . --preset build-docs-only   # Tell CMake you want to build only the docs
+		cmake --build build --config Release  # Build the docs
+
+	.. code-block:: uv
+
+		uv venv                               # Create a Python virtual environment
+		uv pip sync pylock.toml               # Install the necessary Python packages
+		source .venv/bin/activate             # Activate the environment
+		cmake -S . --preset build-docs-only   # Tell CMake you want to build only the docs
+		cmake --build build --config Release  # Build the docs
 
 .. _style-guide:
 

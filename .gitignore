@@ -1,4 +1,4 @@
-.cache/
+.*cache/
 .devcontainer/
 .ipynb*
 .virtual_documents/
