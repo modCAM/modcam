@@ -41,13 +41,6 @@ cmake_dependent_option(
 	"Compile the code. Turn off to build only the documentation." ON
 	"MODCAM_BUILD_DOC AND NOT MODCAM_ENABLE_TESTING AND NOT MODCAM_ENABLE_LINTING" ON
 )
-cmake_dependent_option(
-	MODCAM_FORCE_VIRTUAL_ENV
-	"Throw an error if a Python virtual environment is not active." ON
-	"MODCAM_BUILD_DOC" ON
-) # The documentation is built by Sphinx, which requires certain Python
-  # packages. We only force the installation of those packages when building the
-  # documentation. See cmake/modcam_dependencies.cmake.
 
 # Documentation
 if(MODCAM_BUILD_DOC)
@@ -202,5 +195,4 @@ else()
 	mark_as_advanced(MODCAM_ENABLE_TESTING)
 	mark_as_advanced(MODCAM_ENABLE_LINTING)
 	mark_as_advanced(MODCAM_BUILD_PROJECT)
-	mark_as_advanced(MODCAM_FORCE_VIRTUAL_ENV)
 endif()
