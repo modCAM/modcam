@@ -20,10 +20,18 @@ project(
     LANGUAGES CXX
 )
 
+include(FetchContent)
+FetchContent_Declare(
+	modcam-utils
+	GIT_REPOSITORY "https://github.com/modCAM/modcam-utils"
+	GIT_TAG 65c032b281827947ebddcf147da2387cd22d8654
+)
+FetchContent_MakeAvailable(modcam-utils)
+modcam_utils_setup()
+
 # Helpful CMake modules
 include(CMakeDependentOption)
 include(CMakeRC)
-include(FetchContent)
 include(GNUInstallDirs)
 
 # Require out-of-source builds
@@ -74,67 +82,7 @@ include(modcam_dependencies)
 
 # Linting/static analysis
 if(MODCAM_ENABLE_LINTING)
-	set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
-
-	if(NOT CLANG_TIDY_EXECUTABLE)
-		find_program(
-			CLANG_TIDY_EXECUTABLE
-			NAMES
-				clang-tidy
-				clang-tidy-21
-				clang-tidy-20
-				clang-tidy-19
-				clang-tidy-18
-				clang-tidy-17
-				clang-tidy-16
-				clang-tidy-15
-		)
-		if (NOT CLANG_TIDY_EXECUTABLE)
-			string(
-				CONCAT CLANG_TIDY_ERR_MSG
-				"clang-tidy was not found. Please specify the path to "
-				"clang-tidy as a command line argument:\n"
-				"    -D CLANG_TIDY_EXECUTABLE=/path/to/clang-tidy"
-			)
-			message(FATAL_ERROR ${CLANG_TIDY_ERR_MSG})
-		endif()
-	endif()
-
-	# set(CMAKE_C_CLANG_TIDY ${CLANG_TIDY_EXECUTABLE} -p ${CMAKE_BINARY_DIR})
-	set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_EXECUTABLE} -p ${CMAKE_BINARY_DIR})
-	configure_file(.clang-tidy .clang-tidy COPYONLY)
-
-	if(NOT RUN_CLANG_TIDY_EXECUTABLE)
-		find_program(
-			RUN_CLANG_TIDY_EXECUTABLE
-			NAMES
-				run-clang-tidy
-				run-clang-tidy-21
-				run-clang-tidy-20
-				run-clang-tidy-19
-				run-clang-tidy-18
-				run-clang-tidy-17
-				run-clang-tidy-16
-				run-clang-tidy-15
-		)
-		if (NOT RUN_CLANG_TIDY_EXECUTABLE)
-			string(
-				CONCAT RUN_CLANG_TIDY_ERR_MSG
-				"run-clang-tidy was not found. Please specify the path to "
-				"run-clang-tidy as a command line argument:\n"
-				"    -D RUN_CLANG_TIDY_EXECUTABLE=/path/to/run-clang-tidy"
-			)
-			message(FATAL_ERROR ${RUN_CLANG_TIDY_ERR_MSG})
-		endif()
-	endif()
-
-	add_custom_target(
-		run-clang-tidy ALL
-		COMMAND ${RUN_CLANG_TIDY_EXECUTABLE}
-			-clang-tidy-binary ${CLANG_TIDY_EXECUTABLE}
-			-p ${CMAKE_BINARY_DIR}
-			-warnings-as-errors '*'
-	)
+	include(ClangTidy)
 endif()
 
 # Project data
