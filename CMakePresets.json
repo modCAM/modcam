@@ -67,6 +67,7 @@
 			"displayName": "Build only the documentation",
 			"binaryDir": "build",
 			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Release",
 				"MODCAM_BUILD_DOC": {
 					"type": "BOOL",
 					"value": "ON"
