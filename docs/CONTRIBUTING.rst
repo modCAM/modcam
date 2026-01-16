@@ -106,25 +106,42 @@ Build the documentation
 
 ModCAM uses Python-based tools to build the documentation. The necessary Python packages are in ``requirements.txt`` and in ``pylock.toml``. The ``requirements.txt`` file will be removed once ``pylock.toml`` is fully supported.
 
-To build the docs:
+To build the docs, first set up a Python virtual environment:
 
-.. tab-set-code::
+.. tab-set::
 
-	.. code-block:: pip
+	.. tab-item:: pip
 
-		python -m venv .venv                  # Create a Python virtual environment
-		source .venv/bin/activate             # Activate the environment
-		pip install -r requirements.txt       # Install the necessary Python packages
-		cmake -S . --preset build-docs-only   # Tell CMake you want to build only the docs
-		cmake --build build --config Release  # Build the docs
+		.. code-block:: bash
 
-	.. code-block:: uv
+			python -m venv .venv             # Create a Python virtual environment
+			source .venv/bin/activate        # Activate the environment
+			pip install -r requirements.txt  # Install the necessary Python packages
 
-		uv venv                               # Create a Python virtual environment
-		uv pip sync pylock.toml               # Install the necessary Python packages
-		source .venv/bin/activate             # Activate the environment
-		cmake -S . --preset build-docs-only   # Tell CMake you want to build only the docs
-		cmake --build build --config Release  # Build the docs
+	.. tab-item:: uv
+
+		.. code-block:: bash
+
+			uv venv                    # Create a Python virtual environment
+			uv pip sync pylock.toml    # Install the necessary Python packages
+			source .venv/bin/activate  # Activate the environment
+
+Then, build with either CMake or Sphinx:
+
+.. tab-set::
+
+	.. tab-item:: CMake
+
+		.. code-block:: bash
+
+			cmake -S . --preset build-docs-only  # Tell CMake you want to build only the docs
+			cmake --build build                  # Build the docs
+
+	.. tab-item:: Sphinx
+
+		.. code-block:: bash
+
+			sphinx-build -b html docs/ build/docs/sphinx
 
 .. _style-guide:
 
@@ -161,7 +178,7 @@ Functions
 
 Function and variable names should use `underscore style`_.
 
-When possible, `use return values`_ rather than output parameters. When output parameters are necessary, they should come before inputs in the function declaration so that default input values can be specified. For example: ``void foo(Out_Type1 output1, Out_Type2 output2, const In_Type1 input1, const In_Type2 input2)``
+When possible, `use return values`_ rather than output parameters. When output parameters are necessary, they should come before inputs in the function declaration so that default input values can be specified. For example: ``void foo(Out_Type1 &output1, Out_Type2 &output2, const In_Type1 &input1, const In_Type2 &input2)``
 
 Since there can be multiple approaches to the same problem, functions should be suffixed with the first three letters of the lead author's surname and the year of publication (similar to some inline citation styles). For example: ``principal_curvature_rus2004``
 
