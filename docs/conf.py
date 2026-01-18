@@ -38,7 +38,6 @@
 # -- Project information -------------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-import os
 from pathlib import Path
 import re
 import sphinx
@@ -88,15 +87,7 @@ bibtex_bibfiles = ["modCAM.bib"]
 bibtex_default_style = "unsrt"
 
 # -- Breathe configuration -----------------------------------------------------
-DOCS_BUILD_DIR = (
-    os.getenv("MODCAM_DOCS_BUILD_DIR")
-    if os.getenv("MODCAM_DOCS_BUILD_DIR")
-    else PROJECT_ROOT / "build" / "docs"
-)
-doxygen_output_dir = DOCS_BUILD_DIR / "doxygen"
-
 breathe_default_project = "modCAM"
-breathe_projects = {"modCAM": doxygen_output_dir / "xml"}
 
 try:
     doxygen_test = subprocess.check_output(["doxygen", "--version"], encoding="utf-8")
@@ -123,6 +114,7 @@ def generate_doxyfile(
         A dict in which the keys are the strings to find, and the values are
         the replacement strings.
     """
+    doxyfile_out.parent.mkdir(exist_ok=True, parents=True)
     with open(doxyfile_tmpl, "r") as in_file, open(doxyfile_out, "w") as out_file:
         template = in_file.read()
         for find, replace in find_and_replace.items():
@@ -150,11 +142,11 @@ def run_doxygen(doxyfile: Path) -> None:
 def generate_doxygen_xml(app: Sphinx) -> None:
     """Generate Doxygen XML files if we're on the ReadTheDocs server"""
     doxyfile_tmpl = PROJECT_ROOT / "docs" / "Doxyfile.in"
-    doxyfile = DOCS_BUILD_DIR / "Doxyfile"
+    doxyfile = Path(app.config.modcam_doxygen_output_dir) / "Doxyfile"
     doxyfile_find_and_replace = {
         "@DOXYGEN_CITE_BIB_FILES@": (PROJECT_ROOT / "docs" / "modCAM.bib").as_posix(),
         "@_DOXYGEN_INPUT@": f"{PROJECT_ROOT.as_posix()}/include {PROJECT_ROOT.as_posix()}/src/modcam",
-        "@DOXYGEN_OUTPUT_DIRECTORY@": (doxygen_output_dir).as_posix(),
+        "@DOXYGEN_OUTPUT_DIRECTORY@": app.config.modcam_doxygen_output_dir,
         "@DOXYGEN_STRIP_FROM_PATH@": (PROJECT_ROOT).as_posix(),
     }
     generate_doxyfile(
@@ -165,15 +157,18 @@ def generate_doxygen_xml(app: Sphinx) -> None:
     run_doxygen(doxyfile)
 
 
-def setup(app) -> ExtensionMetadata:
-    if sphinx.version_info[:2] < (7, 4):
-        # Approach borrowed from the Sphinx docs
-        app.add_object_type(
-            "confval",
-            "confval",
-            objname="configuration value",
-            indextemplate="pair: %s; configuration value",
-        )
+def setup(app: sphinx.application) -> ExtensionMetadata:
+    app.add_config_value(
+        "modcam_doxygen_output_dir",
+        (PROJECT_ROOT / "build" / "docs" / "doxygen").as_posix(),
+        "env",
+        [str],
+        "Where to put the Doxygen output.",
+    )
+    app.config.breathe_projects = {
+        "modCAM": Path(app.config.modcam_doxygen_output_dir) / "xml"
+    }
+    print(f"Placing Doxygen output in {app.config.modcam_doxygen_output_dir}")
 
     # Add hook for building doxygen xml when needed
     app.connect("builder-inited", generate_doxygen_xml)

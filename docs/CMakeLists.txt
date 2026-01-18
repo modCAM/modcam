@@ -8,10 +8,6 @@
 # SPDX-FileCopyrightText: Copyright contributors to the modCAM project.
 # SPDX-License-Identifier: MPL-2.0
 
-# conf.py looks for this environment variable to determine the output location
-# for the generated docs.
-set(ENV{MODCAM_DOCS_BUILD_DIR} "${CMAKE_CURRENT_BINARY_DIR}")
-
 find_package(Sphinx REQUIRED)
 
 set(SPHINX_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/sphinx)
@@ -19,6 +15,7 @@ sphinx_build(
 	modCAM_sphinx_docs ALL
 	OPTIONS
 		"-b html"
+		"-D modcam_doxygen_output_dir=${CMAKE_CURRENT_BINARY_DIR}/doxygen"
 	SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
 	OUTPUT_DIR "${SPHINX_BUILD_DIR}"
 	SOURCES
