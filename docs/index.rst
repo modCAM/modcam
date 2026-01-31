@@ -1,9 +1,8 @@
 ####################
-modCAM documentation
+modCAM C++ reference
 ####################
 
-ModCAM is free and open source software for Computer Aided Manufacturing (CAM)
-research.
+This section provides information about the C++ library at the heart of modCAM. Here you can find information on how to use modCAM in your own project and how to build modCAM yourself, as well as reference information on the library's functions.
 
 
 .. toctree::
@@ -15,13 +14,12 @@ research.
 
 .. toctree::
    :caption: Reference
-   :maxdepth: 2
-   :hidden:
+   :maxdepth: 1
 
    reference/mesh
 
 .. toctree::
    :caption: Bibliography
-   :hidden:
+   :maxdepth: 1
 
    bibliography

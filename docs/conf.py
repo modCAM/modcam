@@ -51,7 +51,7 @@ if TYPE_CHECKING:
 
 
 project = "modCAM"
-author = "contributors to the modCAM project"
+author = ""
 copyright = "contributors to the modCAM project"
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
