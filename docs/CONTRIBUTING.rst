@@ -59,7 +59,7 @@ If you want to work on the improvements yourself, thank you! You can fork the re
 Compile and test the code
 -------------------------
 
-There is a `development container <https://github.com/modCAM/devcontainer>`__ with everything you need pre-installed, though it is not a requirement to use the container. To run the container::
+There is a `development container <https://github.com/modCAM/devcontainer>`__ with everything you need pre-installed, though you're not required to use the container. To run the container::
 
 	docker pull ghcr.io/modcam/devcontainer:latest
 	docker run --rm -it ghcr.io/modcam/devcontainer:latest

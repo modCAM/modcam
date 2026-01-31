@@ -58,7 +58,7 @@ cmake --build build/
 cmake --install build/ --prefix build/modcam
 ```
 
-For more build options, see [CONTRIBUTING.rst](docs/CONTRIBUTING.rst).
+For more build options, see [the contributing guidelines](docs/CONTRIBUTING.rst).
 
 ## Communication channels
 
