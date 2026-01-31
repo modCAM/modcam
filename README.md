@@ -24,11 +24,11 @@ At this early stage, there's not much here. You can help by [contributing](docs/
 
 ### Bindings to other languages
 
-Not everyone loves to write, compile, and (inevitably) debug C++ code, so modCAM has [Python bindings]() to enable easier prototyping of your own algorithms (which we hope you [share](docs/CONTRIBUTING.rst) with the community). If you want to add other language bindings it would be greatly appreciated! Please open an [issue](https://github.com/modCAM/modcam/issues) pointing to your bindings.
+Not everyone loves to write, compile, and (inevitably) debug C++ code, so modCAM has [Python bindings](https://pypi.org/project/modcam/) to enable easier prototyping of your own algorithms (which we hope you [share](docs/CONTRIBUTING.rst) with the community). If you want to add other language bindings it would be greatly appreciated! Please open an [issue](https://github.com/modCAM/modcam/issues) pointing to your bindings.
 
 ## Documentation
 
-For tutorials and further information about the project in general, see the project main page on [readthedocs]().
+For tutorials and further information about the project in general, see the documentation at [https://modcam-docs.readthedocs.io/](https://modcam-docs.readthedocs.io/).
 
 For a technical reference guide to the modCAM functions, see the [C++ reference page]().
 
