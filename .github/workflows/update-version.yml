@@ -1,0 +1,87 @@
+# The version should be updated whenever changes are made to 'main'. To update
+# the version, this workflow should
+# - checkout the code,
+# - update the VERSION file,
+# - amend the last commit to include the bumped VERSION file, and
+# - tag that commit with the new version.
+#
+# WARNING: It's very easy to trigger an infinite workflow loop, as this workflow
+# pushes to 'main', and it is itself triggered by pushes to 'main'. We avoid
+# this situation by checking if VERSION was changed.
+#
+# I think I should be able to ignore any pushes that change 'VERSION' via the
+# following filter:
+#   paths:
+#     - 'include/**'
+#     - 'tools/packaging/**'
+#     - 'src/**'
+#     - '!VERSION'
+# However, there is a known issue with the paths filter:
+# https://github.com/actions/runner/issues/2324. The workaround is to add a step
+# that checks if VERSION was changed. This solution has the unfortunate
+# consequence that this workflow is run twice, once to bump the version, and
+# again when the updated VERSION file is pushed to 'main'. On the second round,
+# though, the check prevents further workflow runs.
+
+name: Update version
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "include/**"
+      - "tools/packaging/**"
+      - "src/**"
+
+env:
+  VERSION_FILE: VERSION
+
+jobs:
+  update-version:
+    name: Update version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: none
+
+    steps:
+      - uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ vars.UPDATE_VERSION_APP_ID }}
+          private-key: ${{ secrets.UPDATE_VERSION_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Filter on VERSION
+        id: filter-version
+        run: |
+          version_changed=$(git diff --quiet HEAD~1 HEAD -- VERSION; echo $?)
+          if [ $version_changed -ne 0 ]; then
+            echo "version_changed=true" >> $GITHUB_ENV
+          else
+            echo "version_changed=false" >> $GITHUB_ENV
+          fi
+
+      - name: Update version
+        if: env.version_changed == 'false'
+        run: |
+          cmake -P ./tools/cmake/update_version.cmake
+          python ./tools/changelog.py
+
+      - name: Commit new version
+        if: env.version_changed == 'false'
+        run: |
+          git config user.name 'modcam-version-update[bot]'
+          git config user.email '199305358+modcam-version-update[bot]@users.noreply.github.com'
+          version="$(< $VERSION_FILE)"
+          echo "New version: $version"
+          git add $VERSION_FILE CHANGELOG.md
+          git commit --amend --no-edit
+          git tag -a $version -m "$version"
+          git push origin main --follow-tags --force

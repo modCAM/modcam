@@ -1,8 +1,11 @@
+.*cache/
+.devcontainer/
 .ipynb*
 .virtual_documents/
 .vscode/
 __pycache__
 build*/
-venv/
+.venv/
 CMakeUserPresets.json
 modcam_version.cpp
+vcpkg_installed/

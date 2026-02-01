@@ -1,0 +1,8 @@
+# Required Python packages for...
+
+# building the documentation
+sphinx
+breathe >= 5.0.0a5
+sphinx-book-theme
+sphinx-copybutton
+sphinx-design

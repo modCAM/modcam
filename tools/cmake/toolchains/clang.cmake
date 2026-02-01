@@ -1,0 +1,7 @@
+find_program(CLANG_EXECUTABLE clang)
+find_program(CLANGXX_EXECUTABLE clang++)
+set(CMAKE_C_COMPILER ${CLANG_EXECUTABLE})
+set(CMAKE_CXX_COMPILER ${CLANGXX_EXECUTABLE})
+
+message("clang toolchain CMAKE_C_COMPILER = ${CMAKE_C_COMPILER}")
+message("clang toolchain CMAKE_CXX_COMPILER = ${CMAKE_CXX_COMPILER}")

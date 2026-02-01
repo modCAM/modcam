@@ -1,207 +1,192 @@
-name: CI
+# The test workflow should run whenever changes are pushed to a pull request
+# branch or to 'main'. For any changes pushed to 'main', this workflow should
+# only run after a version update. This workflow should
+# - set up the build environment,
+# - checkout the code,
+# - build the code,
+# - run linting checks, and
+# - run unit tests.
+#
+# A release should be created on 'main' after tests pass.
+
+name: Continuous integration
 
 on:
   push:
-    branches: [ main ]
-    paths-ignore: [ cmake/modcam_version.cmake ]
+    branches:
+      - main
+    paths:
+      - VERSION
   pull_request:
-    paths-ignore: [ cmake/modcam_version.cmake ]
+    paths:
+      - "**"
+      - "!.github/**"
+      - ".github/workflows/build-and-test.yml"
+      - "!docs/**"
+      - "!.clang-format"
+      - "!.gitignore"
+      - "!LICENSE"
+      - "!README.md"
+      - "!VERSION"
 
-env: 
-  VCPKG_ROOT: "./vcpkg"
+env:
   VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
-  VERSION_FILE: cmake/modcam_version.cmake
+  VERSION_FILE: VERSION
+  CPP_COMPILER: "g++"
 
 jobs:
-  update-version:
-    name: Update version
-    runs-on: ubuntu-latest
-    permissions: 
-      contents: write
-    outputs:
-      version: ${{ steps.update-version.outputs.version }}
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Get current version
-      run: |
-        version="$(< $VERSION_FILE)"
-        pattern='([[:digit:]]{8}(\.)?[[:digit:]]*)'
-        [[ $version =~ $pattern ]]
-        version="${BASH_REMATCH[1]}"
-        echo "version: $version"
-        IFS='.' read -ra version <<< "$version"
-        echo "MAJOR_VERSION=${version[0]}" >> "$GITHUB_ENV"
-        echo "MINOR_VERSION=${version[1]}" >> "$GITHUB_ENV"
-
-    - name: Update version
-      id: update-version
-      run: |
-        utc_date=$(date --utc +"%Y%m%d")
-        if [ "$utc_date" -eq "$MAJOR_VERSION" ]; then
-          if [[ -z "$MINOR_VERSION" ]]; then
-            MINOR_VERSION=0
-          fi
-          (( ++MINOR_VERSION ))
-          version=$utc_date.$MINOR_VERSION
-        else
-          version=$utc_date
-        fi
-        echo -e "set(modCAM_VER $version)\n" > $VERSION_FILE
-        echo "version=$version" >> "$GITHUB_OUTPUT"
-
-    - name: Upload version file
-      uses: actions/upload-artifact@v4
-      with:
-        name: version-file
-        path: ${{ env.VERSION_FILE }}
-        if-no-files-found: error
-        overwrite: true
-        retention-days: 1
-
   build-and-test:
-    name: Build and test on ${{ matrix.os }} + ${{ matrix.cpp_compiler }} + ${{ matrix.build_type }}
-    runs-on: ${{ matrix.os }}
-    needs: update-version
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest, windows-latest ]
-        build_type: [ Release ]
-        cpp_compiler: [ g++, cl ]
-        exclude:
-          - os: windows-latest
-            cpp_compiler: g++
-          - os: ubuntu-latest
-            cpp_compiler: cl
+    name: Build and test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    container: ghcr.io/modcam/devcontainer:latest
+    permissions:
+      contents: read
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v6
 
-    - name: Download version artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: version-file
-        path: cmake/
+      - name: Set up cache
+        uses: actions/github-script@v8
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-    - name: Set up cache
-      uses: actions/github-script@v7
-      with:
-        script: |
-          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+      - name: Set up Git LFS
+        run: git lfs install
 
-    - name: Install vcpkg
-      shell: bash
-      run: |
-        git clone http://github.com/Microsoft/vcpkg
-        ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
+      - name: Configure
+        run: >
+          cmake -S .
+          -DCMAKE_CXX_COMPILER=${{ env.CPP_COMPILER }}
+          -DCMAKE_BUILD_TYPE=Release
+          --preset linting
 
-    - name: Configure
-      run: >
-        cmake -S .
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        --preset "build-tests"
+      - name: Build
+        run: cmake --build build --config Release
 
-    - name: Build
-      run: cmake --build build --config ${{ matrix.build_type }}
+      - name: Test
+        id: ctest
+        run: ctest --test-dir build --build-config Release
 
-    - name: Test
-      run: ctest --test-dir build --build-config ${{ matrix.build_type }}
+      - name: Check failed tests
+        if: ${{ failure() && steps.ctest.conclusion == 'failure' }}
+        run: ctest --test-dir build --build-config Release --rerun-failed --output-on-failure
 
-    - name: Package
-      if: ${{ matrix.build_type == 'Release' }}
-      run: |
-        cd build/
-        cpack -C ${{ matrix.build_type }} -B ./package-artifacts
+      - name: Package
+        id: package
+        if: github.ref_name == github.event.repository.default_branch
+        run: |
+          cd build/
+          cpack -C Release -B ./package-artifacts
 
-    - name: Upload package artifacts
-      if: ${{ matrix.build_type == 'Release' }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: package-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.build_type }}
-        path: build/package-artifacts/*.*
-        retention-days: 5
+      - name: Upload package artifacts
+        if: steps.package.outcome == 'success'
+        uses: actions/upload-artifact@v6
+        with:
+          name: cmake-packages
+          path: build/package-artifacts/*.*
+          retention-days: 5
 
   # Make sure the documentation is not broken.
   build-docs:
     name: Build docs
     runs-on: ubuntu-latest
-    needs: update-version
+    defaults:
+      run:
+        shell: bash
+    container: ghcr.io/modcam/devcontainer:latest
+    permissions:
+      contents: read
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v6
 
-    - name: Download version artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: version-file
-        path: cmake/
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.9.21"
+          enable-cache: true
 
-    - name: Install Doxygen
-      run: sudo apt-get install -y doxygen
-    
-    - name: Build docs
-      run: |
-        cmake -S . --preset "build-docs-only"
-        cmake --build build --config Release
+      - name: Install the Python dependencies
+        run: |
+          uv venv
+          uv pip sync pylock.toml
 
-  push-version:
-    name: Push new version
+      - name: Build the docs
+        run: |
+          source .venv/bin/activate
+          cmake -S . --preset "build-docs-only"
+          cmake --build build --config Release
+
+  sbom:
+    name: Software bill of materials
     runs-on: ubuntu-latest
-    needs: [ update-version, build-and-test, build-docs ]
-    if: github.ref_name == 'main'
+    defaults:
+      run:
+        shell: bash
+    container: ghcr.io/modcam/devcontainer:latest
+    needs: [build-and-test, build-docs]
+    if: github.ref_name == github.event.repository.default_branch
     permissions:
       contents: write
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v6
 
-    - name: Download version artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: version-file
-        path: cmake/
-
-    - name: Push updated version file
-      id: version-tag
-      run: |
-        git add $VERSION_FILE
-        git -c user.name='github-actions[bot]' -c user.email='<>' commit -m 'Update version'
-        version=${{ needs.update-version.outputs.version }}
-        echo "version: $version"
-        git tag $version
-        git fetch
-        git push
-        git push origin $version
+      - name: Update dependency graph
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VCPKG_FEATURE_FLAGS: dependencygraph
+        run: vcpkg install --dry-run
 
   create-release:
     name: Create release
     runs-on: ubuntu-latest
-    needs: [ update-version, build-and-test, push-version ]
+    needs: [sbom]
+    if: github.ref_name == github.event.repository.default_branch
     permissions:
       contents: write
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v6
 
-    - name: Download package artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: package-artifacts
-        merge-multiple: true
+      - name: Download package artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: cmake-packages
+          path: package-artifacts
+          merge-multiple: true
 
-    - name: Create release
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        VERSION: ${{needs.update-version.outputs.version}}
-      run: |
-        gh release create $VERSION ./package-artifacts/*.tar.gz ./package-artifacts/*.zip
+      - uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ vars.SBOM_API_APP_ID }}
+          private-key: ${{ secrets.SBOM_API_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+
+      - name: Download SBOM
+        run: >
+          curl -L \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $SBOM_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/$REPO/dependency-graph/sbom \
+            --output modcam-sbom.json
+        env:
+          SBOM_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPO: ${{ github.repository }}
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version="$(< ${{ env.VERSION_FILE }})"
+          gh release create $version ./package-artifacts/*.tar.gz ./package-artifacts/*.zip CHANGELOG.md modcam-sbom.json
