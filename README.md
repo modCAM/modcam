@@ -74,7 +74,7 @@ All interactions with the modCAM community are expected to follow the [Code of c
 
 ## Contributing
 
-Enhancements and bug fixes are welcome. For instructions on how to contribute, see [CONTRIBUTING.rst](docs/CONTRIBUTING.rst).
+Enhancements and bug fixes are welcome. For instructions on how to contribute, see [the contributing guidelines](docs/CONTRIBUTING.rst).
 
 ## License
 
