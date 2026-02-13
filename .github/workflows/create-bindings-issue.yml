@@ -6,6 +6,9 @@ on:
   pull_request:
     types: [closed]
 
+permissions:
+  contents: read
+
 jobs:
   create-issue:
     name: Trigger bindings issue creation
@@ -14,7 +17,7 @@ jobs:
     permissions:
       issues: write
     steps:
-      - uses: actions/create-github-app-token@v2
+      - uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
         id: app-token
         with:
           app-id: ${{ vars.ISSUE_BOT_APP_ID }}
