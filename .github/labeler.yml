@@ -11,3 +11,6 @@ bug:
 
 documentation:
   - head-branch: ["^docs/"]
+
+security:
+  - head-branch: ["^security/"]
