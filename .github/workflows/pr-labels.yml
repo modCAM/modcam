@@ -6,6 +6,9 @@ on:
       - opened
       - reopened
 
+permissions:
+  contents: read
+
 jobs:
   labeler:
     permissions:
@@ -13,4 +16,4 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@v6
+      - uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
