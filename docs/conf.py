@@ -71,16 +71,38 @@ if re.match(r"^\d+\.\d+\.\d+(\.d+)?$", git_tag.stdout):
 # -- General configuration -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ["breathe", "sphinx_copybutton", "sphinx_design"]
+extensions = ["breathe", "sphinx.ext.intersphinx", "sphinx_copybutton", "sphinx_design"]
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+
+intersphinx_mapping = {
+    "modcam-docs": ("https://modcam-docs.readthedocs.io/", None),
+    "modcam-py": ("https://modcam-docs.readthedocs.io/projects/modcam-python/", None),
+}
+intersphinx_disabled_reftypes = ["*"]
 
 
 # -- Options for HTML output ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "sphinx_book_theme"
+html_theme_options = {
+    "repository_url": "https://github.com/modCAM/modcam",
+    "repository_branch": "main",
+    "path_to_docs": "docs",
+    "use_edit_page_button": True,
+    "use_source_button": True,
+    "use_issues_button": True,
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/modCAM/modcam",
+            "icon": "fa-brands fa-square-github",
+            "type": "fontawesome",
+        },
+    ],
+}
 
 # -- Bibliography configuration ------------------------------------------------
 bibtex_bibfiles = ["modCAM.bib"]

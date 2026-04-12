@@ -30,7 +30,7 @@ Not everyone loves to write, compile, and (inevitably) debug C++ code, so modCAM
 
 For tutorials and further information about the project in general, see the documentation at [https://modcam-docs.readthedocs.io/](https://modcam-docs.readthedocs.io/).
 
-For a technical reference guide to the modCAM functions, see the [C++ reference page]().
+For a technical reference guide to the modCAM functions, see the [C++ reference page](https://modcam-docs.readthedocs.io/projects/modcam-cpp/).
 
 ## Getting started
 
