@@ -6,6 +6,12 @@ This section provides information about the C++ library at the heart of modCAM. 
 
 
 .. toctree::
+   :titlesonly:
+   :hidden:
+
+   Documentation home <https://modcam-docs.readthedocs.io/>
+
+.. toctree::
    :caption: Getting Started
    :maxdepth: 2
 
