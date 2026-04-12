@@ -2,23 +2,29 @@
 Contributing
 ************
 
-Welcome, and thank you for your interest in making a difference! ModCAM relies on bug fixes and new algorithms from contributors like you.
+Welcome, and thank you for your interest in making a difference! ModCAM relies
+on bug fixes and new algorithms from contributors like you.
 
-If you have a bug fix or an enhancement you'd like to make, this document will guide you through the process. Here you'll find
+If you have a bug fix or an enhancement you'd like to make, this document will
+guide you through the process. Here you'll find
 
 * :ref:`what sort of contributions we do and don't want <project-scope>`
 * :ref:`where to find information and ask questions <comms-channels>`
 * :ref:`how to contribute <how-to-contribute>`
 * :ref:`how to style your code <style-guide>`
 
-Please review these guidelines and the code of conduct before making your contribution so that we can maintain consistent, high quality code.
+Please review these guidelines and the code of conduct before making your
+contribution so that we can maintain consistent, high quality code.
 
 .. _project-scope:
 
 Project scope
 =============
 
-The focus of modCAM is the control of machine tools for manufacturing. We welcome algorithms for additive and subtractive manufacturing, such as workpiece setup or tool path planning. Plant management operations, such as scheduling and logistics, fall outside the scope of modCAM.
+The focus of modCAM is the control of machine tools for manufacturing. We
+welcome algorithms for additive and subtractive manufacturing, such as workpiece
+setup or tool path planning. Plant management operations, such as scheduling and
+logistics, fall outside the scope of modCAM.
 
 .. _comms-channels:
 
@@ -43,14 +49,19 @@ How to
 Submit a bug report or suggest an enhancement
 ---------------------------------------------
 
-If you find a bug, or you want to suggest an enhancement, please start by opening an `issue`_ to raise awareness. However, before opening an issue...
+If you find a bug, or you want to suggest an enhancement, please start by
+opening an `issue`_ to raise awareness. However, before opening an issue...
 
 * Make sure that you are using the latest version.
 * Read the documentation carefully to check if the functionality already exists.
-* Perform a search to see if the enhancement or bug fix has already been suggested. If it has, add a comment to the existing issue instead of opening a new one.
-* For new features, make sure your idea fits within the :ref:`scope <project-scope>` of the project.
+* Perform a search to see if the enhancement or bug fix has already been
+  suggested. If it has, add a comment to the existing issue instead of opening a
+  new one.
+* For new features, make sure your idea fits within the
+  :ref:`scope <project-scope>` of the project.
 
-If you want to work on the improvements yourself, thank you! You can fork the repository, make your changes, and open a `pull request`_.
+If you want to work on the improvements yourself, thank you! You can fork the
+repository, make your changes, and open a `pull request`_.
 
 .. _issue: https://github.com/modCAM/modcam/issues
 
@@ -59,7 +70,9 @@ If you want to work on the improvements yourself, thank you! You can fork the re
 Compile and test the code
 -------------------------
 
-There is a `development container <https://github.com/modCAM/devcontainer>`__ with everything you need pre-installed, though you're not required to use the container. To run the container::
+There is a `development container <https://github.com/modCAM/devcontainer>`__
+with everything you need pre-installed, though you're not required to use the
+container. To run the container::
 
 	docker pull ghcr.io/modcam/devcontainer:latest
 	docker run --rm -it ghcr.io/modcam/devcontainer:latest
@@ -73,7 +86,8 @@ ModCAM has the following dependencies:
 - `Breathe <https://breathe.readthedocs.io/>`__ (documentation)
 - `Sphinx <https://www.sphinx-doc.org/>`__ (documentation)
 
-The CMake presets supplied with this project use `vcpkg <https://vcpkg.io/>`__ to install the C++ dependencies.
+The CMake presets supplied with this project use `vcpkg <https://vcpkg.io/>`__
+to install the C++ dependencies.
 
 You can use the following presets and CMake options to configure your build:
 
@@ -104,7 +118,10 @@ As an example, to build modCAM and run the unit tests, do ::
 Build the documentation
 -----------------------
 
-ModCAM uses Python-based tools to build the documentation. The necessary Python packages are in ``requirements.txt`` and in ``pylock.toml``. The ``requirements.txt`` file will be removed once ``pylock.toml`` is fully supported.
+ModCAM uses Python-based tools to build the documentation. The necessary Python
+packages are in ``requirements.txt`` and in ``pylock.toml``. The
+``requirements.txt`` file will be removed once ``pylock.toml`` is fully
+supported.
 
 To build the docs, first set up a Python virtual environment:
 
@@ -148,9 +165,12 @@ Then, build with either CMake or Sphinx:
 Style guide
 ===========
 
-Code style and quality are enforced as much as possible with `clang-format`_ and `clang-tidy`_.
+Code style and quality are enforced as much as possible with `clang-format`_ and
+`clang-tidy`_.
 
-Note that the static analysis checks defined in .clang-tidy are meant to be helpful and not a burden. If you think that one of the checks is overly burdensome, then please open an issue to discuss removing it.
+Note that the static analysis checks defined in .clang-tidy are meant to be
+helpful and not a burden. If you think that one of the checks is overly
+burdensome, then please open an issue to discuss removing it.
 
 Below are the style guidelines that cannot be enforced with clang-format.
 
@@ -161,15 +181,21 @@ Below are the style guidelines that cannot be enforced with clang-format.
 Code organization
 -----------------
 
-The code is organized according to the `Pitchfork Layout`_. The major points of the Pitchfork Layout are as follows:
+The code is organized according to the `Pitchfork Layout`_. The major points of
+the Pitchfork Layout are as follows:
 
-* The ``src/`` directory contains the project source (.cpp) files and private header files. This directory also contains unit tests, which are denoted by the ``.test.cpp`` suffix.
+* The ``src/`` directory contains the project source (.cpp) files and private
+  header files. This directory also contains unit tests, which are denoted by
+  the ``.test.cpp`` suffix.
 * The ``include/`` directory contains the public header (.h) files.
-* The ``tools/`` directory contains development utilities, such as Python scripts, CMake scripts, and packaging utilities.
-* The ``data/`` directory contains project data files, such as images or data files needed by unit tests.
+* The ``tools/`` directory contains development utilities, such as Python
+  scripts, CMake scripts, and packaging utilities.
+* The ``data/`` directory contains project data files, such as images or data
+  files needed by unit tests.
 * Documentation is in the ``docs/`` directory.
 * The ``build/`` directory is reserved for build artifacts.
-* Namespaces should match directories. For example, the namespaced function ``foo::bar::baz()`` should be declared in ``include/foo/bar/baz.h``.
+* Namespaces should match directories. For example, the namespaced function
+  ``foo::bar::baz()`` should be declared in ``include/foo/bar/baz.h``.
 
 .. _Pitchfork Layout: https://github.com/vector-of-bool/pitchfork
 
@@ -178,11 +204,21 @@ Functions
 
 Function and variable names should use `underscore style`_.
 
-When possible, `use return values`_ rather than output parameters. When output parameters are necessary, they should come before inputs in the function declaration so that default input values can be specified. For example: ``void foo(Out_Type1 &output1, Out_Type2 &output2, const In_Type1 &input1, const In_Type2 &input2)``
+When possible, `use return values`_ rather than output parameters. When output
+parameters are necessary, they should come before inputs in the function
+declaration so that default input values can be specified. For example:
+``void foo(Out_Type1 &output1, Out_Type2 &output2, const In_Type1 &input1, const In_Type2 &input2)``
 
-Since there can be multiple approaches to the same problem, functions should be suffixed with the first three letters of the lead author's surname and the year of publication (similar to some inline citation styles). For example: ``principal_curvature_rus2004``
+Since there can be multiple approaches to the same problem, functions should be
+suffixed with the first three letters of the lead author's surname and the year
+of publication (similar to some inline citation styles). For example:
+``principal_curvature_rus2004``
 
-If you're writing a new implementation of an existing function, then try to match the existing function's interface. For example, if implementing a new principal curvature function, try to match the interface of ``modcam::mesh::principal_curvature_rus2004``. This will make it easier for users to swap out different algorithms.
+If you're writing a new implementation of an existing function, then try to
+match the existing function's interface. For example, if implementing a new
+principal curvature function, try to match the interface of
+``modcam::mesh::principal_curvature_rus2004``. This will make it easier for
+users to swap out different algorithms.
 
 .. _underscore style: https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rl-camel
 
@@ -191,9 +227,14 @@ If you're writing a new implementation of an existing function, then try to matc
 Documentation
 -------------
 
-Functions should be documented using `Doxygen`_ in the `Javadoc style`_. The documentation should follow `Diataxis reference principles`_. Namely, it should be a neutral description of what the function does and how to use it. It should not attempt to instruct or explain why. How-to guides and tutorials cover instruction and explanation elsewhere.
+Functions should be documented using `Doxygen`_ in the `Javadoc style`_. The
+documentation should follow `Diataxis reference principles`_. Namely, it should
+be a neutral description of what the function does and how to use it. It should
+not attempt to instruct or explain why. How-to guides and tutorials cover
+instruction and explanation elsewhere.
 
-Citations are strongly encouraged. Citation information should go in the BibTeX file docs/modCAM.bib. They can be referenced with the Doxygen `@cite`_ command.
+Citations are strongly encouraged. Citation information should go in the BibTeX
+file docs/modCAM.bib. They can be referenced with the Doxygen `@cite`_ command.
 
 .. _Doxygen: https://www.doxygen.nl/
 
@@ -206,7 +247,8 @@ Citations are strongly encouraged. Citation information should go in the BibTeX 
 Commit messages
 ---------------
 
-Git commit messages should follow the usual formatting rules. From https://cbea.ms/git-commit/:
+Git commit messages should follow the usual formatting rules. From
+https://cbea.ms/git-commit/:
 
 * Separate subject from body with a blank line
 * Limit the subject line to 50 characters
@@ -225,12 +267,19 @@ See the following resources for more information:
 Changelog
 ---------
 
-The changelog style is based on `Common Changelog`_, though it's been adapted for Calendar Versioning. Before merging a pull request, you should update the changelog according to the `Common Changelog`_ guidelines, with the following deviation:
+The changelog style is based on `Common Changelog`_, though it's been adapted
+for Calendar Versioning. Before merging a pull request, you should update the
+changelog according to the `Common Changelog`_ guidelines, with the following
+deviation:
 
-Do not use the ``## VERSION - DATE`` release header. Since modCAM uses Calendar Versioning, this info is filled in by the CI workflow. Instead, use a template placeholder::
+Do not use the ``## VERSION - DATE`` release header. Since modCAM uses Calendar
+Versioning, this info is filled in by the CI workflow. Instead, use a template
+placeholder::
 
 	## [LATEST] ([#<pull request number>](<pull request URL>))
 
-Here, ``LATEST`` should be left as-is. The CI workflow will fill in the appropriate version. You should replace ``<pull request number>`` and ``<pull request URL>`` with the relevant pull request details.
+Here, ``LATEST`` should be left as-is. The CI workflow will fill in the
+appropriate version. You should replace ``<pull request number>`` and
+``<pull request URL>`` with the relevant pull request details.
 
 .. _Common Changelog: https://common-changelog.org/
